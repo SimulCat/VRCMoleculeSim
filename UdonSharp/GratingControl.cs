@@ -12,8 +12,7 @@ public class GratingControl : UdonSharpBehaviour
     [SerializeField]
     Transform gratingXfrm;
     public GameObject barPrefab;
-    public GameObject framePanel;
-    public Vector2 frameDimensions;
+    public GameObject frameSupport;
     [Range(0.0001f,0.01f)] float increment = 0.0001f;
     public float panelThickness;
     [SerializeField,UdonSynced,FieldChangeCallback(nameof(BarsCollide))]
@@ -58,6 +57,24 @@ public class GratingControl : UdonSharpBehaviour
         }
     }
     [Header("Dimensions @ native 1:1 scale")]
+    [Tooltip("Graphics Metres at Native Scaling 1/x"), SerializeField, UdonSynced, FieldChangeCallback(nameof(NativeGraphicsRatio))]
+    private int nativeGraphicsRatio = 10;
+    public int NativeGraphicsRatio
+    {
+        get => nativeGraphicsRatio > 0 ? nativeGraphicsRatio : 1;
+        set
+        {
+            value = value > 0 ? value : 1;
+            if (value != nativeGraphicsRatio)
+            {
+                nativeGraphicsRatio = value;
+                gratingVersionIsCurrent = false;
+                metricScaleFactor = 1.0f / (scaleDownFactor * nativeGraphicsRatio);
+                outerDimsMetres = nativeMaxDimensions / nativeGraphicsRatio;
+            }
+        }
+    }
+
     [SerializeField] private Vector2 nativeMaxDimensions;
 
 
@@ -109,23 +126,6 @@ public class GratingControl : UdonSharpBehaviour
         return Mathf.Clamp(newIndex, 0, steps.Length - 1);
     }
     [Header("Grating Scale Factors")]
-    [Tooltip("World Scaling 1/x"), SerializeField, UdonSynced, FieldChangeCallback(nameof(NativeGraphicsRatio))]
-    private int nativeGraphicsRatio = 10;
-    public int NativeGraphicsRatio
-    {
-        get => nativeGraphicsRatio > 0 ? nativeGraphicsRatio : 1;
-        set
-        {
-            value = value > 0 ? value : 1;
-            if (value != nativeGraphicsRatio)
-            {
-                nativeGraphicsRatio = value;
-                gratingVersionIsCurrent = false;
-                metricScaleFactor = 1.0f / (scaleDownFactor * nativeGraphicsRatio);
-                metricMaxDimensions = nativeMaxDimensions / nativeGraphicsRatio;
-            }
-        }
-    }
 
     [SerializeField] 
     private int scaleDownFactor = 1;
@@ -179,18 +179,28 @@ public class GratingControl : UdonSharpBehaviour
         } 
     }
     [Header("Dimension Debug")]
-    [SerializeField] Vector2 metricMaxDimensions;
+    [SerializeField, Tooltip("Outer Frame at Native Res")] Vector2 outerDimsMetres;
+    [SerializeField, Tooltip("Outer Frame as seen in Scaled World")] Vector2 maxDimsReduced;
 
+    //[SerializeField] Vector2 outerDimsMetres;
+    
     [SerializeField]
     private Vector2 gratingGraphicsSize = Vector2.one;
     private Vector2 gratingGraphicHalfSize = Vector2.one;
+    [SerializeField,Tooltip("Grating Border Size")]
+    private Vector2 gratingBorderSize = Vector2.one;
 
     [SerializeField]
     private Vector2 pitchSteps = Vector2.one;
+    [SerializeField]
     private Vector2 sizeSteps = Vector2.one;
+    [SerializeField]
     private float barWidth;
+    [SerializeField]
     private float railHeight;
+    [SerializeField]
     private float sideBarWidth;
+    [SerializeField]
     private float upperLowerHeight;
 
     public Vector2 GratingGraphicsSize
@@ -436,14 +446,6 @@ public class GratingControl : UdonSharpBehaviour
             RowPitchNative = testVal;
     }
 
-    float maxWidth
-    {
-        get => metricMaxDimensions.x * experimentScale;
-    }
-    float maxHeight
-    {
-        get => metricMaxDimensions.y * experimentScale;
-    }
 
     private void setCollisionFilter()
     {
@@ -608,9 +610,10 @@ public class GratingControl : UdonSharpBehaviour
         if (nativeGraphicsRatio <= 0)
             return;
         metricScaleFactor = 1.0f / (scaleDownFactor * nativeGraphicsRatio);
-        metricMaxDimensions = nativeMaxDimensions / nativeGraphicsRatio;
+        outerDimsMetres = nativeMaxDimensions / nativeGraphicsRatio;
         graphicsScaleFactor = experimentScale * metricScaleFactor;
         // Set dimensons for the construction of the lattice;
+        maxDimsReduced = nativeMaxDimensions * graphicsScaleFactor;
         graphicsRowPitch = rowPitchNative * graphicsScaleFactor;
         graphicsColPitch = columnPitchNative * graphicsScaleFactor;
         graphicsColWidth = holeWidthNative * graphicsScaleFactor;
@@ -618,11 +621,13 @@ public class GratingControl : UdonSharpBehaviour
         barWidth = graphicsColPitch > graphicsColWidth ? graphicsColPitch - graphicsColWidth : 0;
         railHeight = graphicsRowPitch > graphicsColHeight ? graphicsRowPitch - graphicsColHeight : 0;
         gratingGraphicsSize.x = columnCount < 1 ? 0 : ((graphicsColPitch * (columnCount - 1)) + graphicsColWidth);
-        gratingGraphicsSize.y = rowCount < 1 ? maxHeight : ((graphicsRowPitch * (rowCount - 1)) + graphicsColHeight);
+        gratingGraphicsSize.y = rowCount < 1 ? (maxDimsReduced.y/scaleDownFactor) : ((graphicsRowPitch * (rowCount - 1)) + graphicsColHeight);
+        gratingBorderSize.x = Mathf.Min(maxDimsReduced.x, gratingGraphicsSize.x * 1.25f);
+        gratingBorderSize.y = Mathf.Min(maxDimsReduced.y, gratingGraphicsSize.y * 1.25f);
         gratingGraphicHalfSize = gratingGraphicsSize * 0.5f;
 
-        sideBarWidth = (maxWidth - gratingGraphicsSize.x) / 2.0f;
-        upperLowerHeight = (maxHeight - gratingGraphicsSize.y) / 2.0f;
+        sideBarWidth = (gratingBorderSize.x - gratingGraphicsSize.x) / 2.0f;
+        upperLowerHeight = (gratingBorderSize.y - gratingGraphicsSize.y) / 2.0f;
         if (sideBarWidth < 0.001f)
             sideBarWidth = 0.001f;
 
@@ -632,21 +637,21 @@ public class GratingControl : UdonSharpBehaviour
         // Calculate positions of side and top panels
         Vector2 sidePanelPos = new Vector2 (gratingGraphicHalfSize.x + (sideBarWidth / 2.0f),0);
         Vector2 topPanelPos = new Vector2 (0,gratingGraphicHalfSize.y + (upperLowerHeight / 2.0f));
-        if (framePanel != null)
+        if (frameSupport != null)
         {
-            SetBarSizeAndPosition(framePanel.transform, frameDimensions.x * experimentScale, frameDimensions.y * experimentScale, Vector2.zero, true, barsCollide);
-            framePanel.transform.localPosition = Vector3.right * (panelThickness * .5f);
+            SetBarSizeAndPosition(frameSupport.transform, outerDimsMetres.x * experimentScale, outerDimsMetres.y * experimentScale, Vector2.zero, true, barsCollide);
+            frameSupport.transform.localPosition = Vector3.right * (panelThickness * .5f);
         }
 
         if (barPrefab != null)
         {
             // Set Scales for the Slit and Block Prefabs
-            SetBarSizeAndPosition(panelLeft.transform, sideBarWidth, maxHeight, sidePanelPos, true,!barsCollide);
-            SetBarSizeAndPosition(panelRight.transform, sideBarWidth, maxHeight, -sidePanelPos, true,!barsCollide);
+            SetBarSizeAndPosition(panelLeft.transform, sideBarWidth, gratingBorderSize.y, sidePanelPos, true,!barsCollide);
+            SetBarSizeAndPosition(panelRight.transform, sideBarWidth, gratingBorderSize.y, -sidePanelPos, true,!barsCollide);
             if (rowCount >= 1)
             {
-                SetBarSizeAndPosition(panelTop.transform, gratingGraphicsSize.x, upperLowerHeight, topPanelPos, true,!barsCollide);
-                SetBarSizeAndPosition(panelBottom.transform, gratingGraphicsSize.x,upperLowerHeight, -topPanelPos, true,!barsCollide); ;
+                SetBarSizeAndPosition(panelTop.transform, gratingBorderSize.x, upperLowerHeight, topPanelPos, true,!barsCollide);
+                SetBarSizeAndPosition(panelBottom.transform, gratingBorderSize.x,upperLowerHeight, -topPanelPos, true,!barsCollide); ;
                 panelTop.SetActive(true);
                 panelBottom.SetActive(true);
             }
@@ -656,8 +661,8 @@ public class GratingControl : UdonSharpBehaviour
                panelBottom.SetActive(false);
             }
             // Set scale and then position of the first spacer
-            float barHeight = rowCount > 0 ? gratingGraphicsSize.y : maxHeight;
-            float railWidth = columnCount > 0 ? gratingGraphicsSize.x : maxWidth;
+            float barHeight = rowCount > 0 ? gratingGraphicsSize.y : gratingBorderSize.y;
+            float railWidth = columnCount > 0 ? gratingGraphicsSize.x : gratingBorderSize.x;
             Vector2 studPos = new Vector2 (gratingGraphicHalfSize.x - (graphicsColWidth + (barWidth / 2.0F)), 0);
             for (int nSlit = 0; nSlit < theBars.Length; nSlit++)
             {
@@ -723,8 +728,8 @@ public class GratingControl : UdonSharpBehaviour
     {
         if (gratingXfrm == null)
             gratingXfrm = transform;
-        metricMaxDimensions = nativeMaxDimensions / nativeGraphicsRatio;
-
+        outerDimsMetres = nativeMaxDimensions / nativeGraphicsRatio;
+        maxDimsReduced = outerDimsMetres * experimentScale;
         //MAX_SLITS = 15;
         if (togBarsCollide != null)
             togBarsCollide.isOn = barsCollide;
@@ -735,8 +740,8 @@ public class GratingControl : UdonSharpBehaviour
         ColumnCount = Mathf.Clamp(columnCount, 1, MAX_SLITS);
         RowCount = Mathf.Clamp(rowCount, 0, MAX_ROWS);
         gratingVersionIsCurrent = false;
-        columnPitchNative = Mathf.Clamp(columnPitchNative, pitchSteps.x, 0.1f);
-        rowPitchNative = Mathf.Clamp(rowPitchNative, pitchSteps.y, maxHeight/(rowCount > 0 ? maxHeight / rowCount : maxHeight));
+        //columnPitchNative = Mathf.Clamp(columnPitchNative, pitchSteps.x, 0.1f);
+        //rowPitchNative = Mathf.Clamp(rowPitchNative, pitchSteps.y, nativeMaxDimensions.y/(rowCount > 0 ? nativeMaxDimensions.y / rowCount : nativeMaxDimensions.y));
         //holeHeightNative = Mathf.Clamp(holeHeightNative, 0, maxHeight/2.0f);
         //holeWidthNative = Mathf.Clamp(holeWidthNative, 0, maxWidth/2.0f);
         if (panelThickness <= 0) panelThickness = 0.001f;
