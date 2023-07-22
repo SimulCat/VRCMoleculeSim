@@ -25,6 +25,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
     private bool settingsChanged = false;
     private bool planckChanged = false;
     private bool gravityChanged = false;
+    private bool trajectoryChanged = false;
     public bool HasGravity
     {
         get => hasGravity;
@@ -168,7 +169,10 @@ public class MoleculeExperiment : UdonSharpBehaviour
     private float avgSimulationSpeed = 5f;
     [SerializeField, Range(0f,0.7f),Tooltip("Fraction of avg velocity +- e.g. 0.5 = +-50% of average")]
     private float randomRange= 0.6f;
+    [SerializeField]
     private float maxSimSpeed;
+    [SerializeField]
+    private float minSimSpeed;
     [SerializeField,Range(0,1)] float userSpeed;
     [SerializeField] bool randomizeSpeeds = true;
     public float RandomRange
@@ -252,6 +256,10 @@ public class MoleculeExperiment : UdonSharpBehaviour
     bool hasSource;
     bool hasHorizontalScatter;
     bool hasVerticalScatter;
+    bool hasTrajectoryModule = false;
+    bool trajectoryValid = false;
+    [SerializeField]
+    TrajectoryModule trajectoryModule;
     [Header("Grating and Detector Distances")]
     public float L1mm = 200;
     public float L2mm = 564;
@@ -430,6 +438,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
         return result;
     }
 
+
     private void LateUpdate()
     {
         int nUpdated = 0;
@@ -438,8 +447,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
         float speedScale;
         float timeToGrating;
         double particleFallVelocity;
-        double particleHeightDelta;
-
 
         if (hasSource)
         {
@@ -460,28 +467,54 @@ public class MoleculeExperiment : UdonSharpBehaviour
                     particles[i].startLifetime = 250;
                     particles[i].randomSeed = 250;
                     particles[i].remainingLifetime = 100;
-
-                    launchPosition = new Vector3(gratingThickness,spreadHigh,spreadWide);
+                    launchPosition = new Vector3(gratingThickness, spreadHigh, spreadWide);
                     particles[i].axisOfRotation = launchPosition;
-                    launchPosition += sourceXfrm.position;  
+                    launchPosition += sourceXfrm.position;
                     float speedTrim = randomizeSpeeds ? UnityEngine.Random.Range(0f, 1f) : userSpeed;
                     speedScale = 1 + Mathf.Lerp(-randomRange, randomRange, speedTrim);
                     float particleSpeed = avgSimulationSpeed * speedScale;
-                    launchVelocity = new Vector3(particleSpeed,0,0);
-                    if (hasGravity)
+                    launchVelocity = new Vector3(particleSpeed, 0, 0);
+                    Color launchColour;
+                    if (trajectoryValid)
                     {
-                        timeToGrating = emitToGratingSim / particleSpeed;
-                        particleFallVelocity = timeToGrating * gravitySim; // V=AT
-                        particleHeightDelta = 0.5d * timeToGrating * particleFallVelocity; // s = 0.5 AT^2
-
-                        launchVelocity.y = (float)-particleFallVelocity; // Calculate initial upward velocity.
-                        launchPosition.y += (float)particleHeightDelta;
+                        int velocityIndex = (int)Mathf.Lerp(0, trajectoryModule.LookupPoints, speedTrim);
+                        launchVelocity = trajectoryModule.lookupVelocity(velocityIndex);
+                        launchColour = trajectoryModule.lookupColour(velocityIndex);
                     }
+                    else 
+                    { 
+                        if (hasGravity)
+                        {
+                            timeToGrating = emitToGratingSim / particleSpeed;
+                            particleFallVelocity = timeToGrating * gravitySim; // V=AT
+                            //particleHeightDelta = 0.5d * timeToGrating * particleFallVelocity; // s = 0.5 AT^2
+
+                            launchVelocity.y = (float)(-particleFallVelocity/2.0); // Calculate initial upward velocity.
+                            //launchPosition.y += (float)particleHeightDelta;
+                        }
+                        launchColour = calcParticleColor(speedTrim);
+                    }
+                    particles[i].rotation3D = launchVelocity;
                     particles[i].position = launchPosition;
                     particles[i].velocity = launchVelocity;
-                    particles[i].startColor = calcParticleColor(speedTrim);
+                    particles[i].startColor = launchColour;
                     //Debug.Log(tmpVel);
-                    particles[i].rotation = particleSpeed;
+                    //particles[i].rotation = particleSpeed;
+                    /*    
+                    else
+                    {
+                        speedScale = 1 + Mathf.Lerp(-randomRange, randomRange, speedTrim);
+                        float particleSpeed = avgSimulationSpeed * speedScale;
+                        launchVelocity = new Vector3(particleSpeed, 0, 0);
+                        if (hasGravity)
+                        {
+                            timeToGrating = emitToGratingSim / particleSpeed;
+                            particleFallVelocity = timeToGrating * gravitySim; // V=AT
+                            //particleHeightDelta = 0.5d * timeToGrating * particleFallVelocity; // s = 0.5 AT^2
+                            launchVelocity.y = (float)(-particleFallVelocity/2.0); // Calculate initial upward velocity.
+                            //launchPosition.y += (float)particleHeightDelta;
+                        }
+                    } */
                 }
                 else
                 {   // Particles below 50 are deemed stopped already and are fading
@@ -497,6 +530,8 @@ public class MoleculeExperiment : UdonSharpBehaviour
                         if (particles[i].velocity.x < 0.01)
                         {
                             Vector3 decalPos = particles[i].position;
+                            Vector3 contactVelocity = particles[i].rotation3D;
+                            contactVelocity.y = -contactVelocity.y;
                             if (processedGrating)
                             {
                                 particleStage = 43;
@@ -505,12 +540,12 @@ public class MoleculeExperiment : UdonSharpBehaviour
                                 if (atTarget)
                                 {
                                     if (hasTargetDecorator)
-                                        targetDisplay.PlotParticle(decalPos, particles[i].startColor, 20f);
+                                        targetDisplay.PlotParticle(decalPos, particles[i].startColor, 30f);
                                     particles[i].remainingLifetime = 0;
                                 }
                                 else if (atFloor)
                                 {
-                                    floorDisplay.PlotParticle(decalPos, particles[i].startColor, 20f);
+                                    floorDisplay.PlotParticle(decalPos, particles[i].startColor, 30f);
                                     particles[i].remainingLifetime = 0;
                                     particles[i].velocity = Vector3.zero;
                                 }
@@ -531,12 +566,13 @@ public class MoleculeExperiment : UdonSharpBehaviour
                                     if (afterGrating)
                                     {
                                         particles[i].position = upDatedPosition;
-                                        particles[i].velocity = new Vector3(particles[i].rotation, 0, 0);
+                                        particles[i].velocity = contactVelocity;
                                     }
                                     else
                                     {
+                                        upDatedPosition.x = decalPos.x;
                                         if (hasGratingDecorator)
-                                            gratingDecals.PlotParticle(decalPos, particles[i].startColor, 0.5f);
+                                            gratingDecals.PlotParticle(upDatedPosition, particles[i].startColor, 0.5f);
                                         particles[i].remainingLifetime = 0;
                                         particleStage = 43;
                                     }
@@ -554,7 +590,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
                         {
                             nUpdated++;
                             particleStage = 240;
-                            float speedFraction = particles[i].rotation / maxSimSpeed;
+                            float speedFraction = particles[i].rotation3D.x / maxSimSpeed;
                             particles[i].remainingLifetime = minLifeTimeAfterGrating / speedFraction;
                             if (useQuantumScatter)
                             {
@@ -597,6 +633,11 @@ public class MoleculeExperiment : UdonSharpBehaviour
         fo.enabled = hasGravity;
         particleEmitter.Clear(); // Restart.
         particleEmitter.Play();
+        if (hasTrajectoryModule)
+        {
+            trajectoryModule.GravitySim = gravitySim;
+            trajectoryModule.HasGravity = hasGravity;
+        }
     }
     private float targetMarkerSize = 1;
     private float gratingMarkerSize = 1;
@@ -606,9 +647,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
         targetMarkerSize = Mathf.Lerp(0.1f,1,value) * mul *.3f;
         if (hasTargetDecorator)
             targetDisplay.ParticleSize = targetMarkerSize;
-        gratingMarkerSize = Mathf.Lerp(0.1f, 1, value) * mul*.9f;
-        if (hasGratingDecorator)
-            gratingDecals.ParticleSize = gratingMarkerSize;
     }
 
     private void dissolveDisplays()
@@ -621,6 +659,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
             targetDisplay.Dissolve();
         if (hasGratingDecorator)
             gratingDecals.Dissolve();
+        Debug.Log("dissolveDisplays()");
     }
     private void updateSettings()
     {
@@ -629,12 +668,19 @@ public class MoleculeExperiment : UdonSharpBehaviour
         setMarkerSizes(targetPointScale);
         settingsChanged = false;
         avgSimulationSpeed = avgMoleculeSpeed * slowScaled;
-        float maxSpeed = avgMoleculeSpeed * (1 + randomRange);
-        maxSimSpeed = maxSpeed * slowScaled;
+        
+        maxSimSpeed = avgSimulationSpeed * (1 + randomRange);
+        minSimSpeed = avgSimulationSpeed * (1 - randomRange);
         minLifeTimeAfterGrating = 1.25f * gratingToTargetSim / maxSimSpeed;
-        minDeBroglieWL = (h * PlanckScale) / (AMU_ToKg * molecularWeight * maxSpeed);
-        //minDeBroglieSim = minDeBroglieWL * experimentScale;
-
+        minDeBroglieWL = (h * PlanckScale) / (AMU_ToKg * molecularWeight * avgMoleculeSpeed*(1+randomRange));
+        if (hasTrajectoryModule)
+        {
+            trajectoryModule.loadSettings(maxSimSpeed, minSimSpeed, gravitySim, hasGravity, emitToGratingSim);
+            trajectoryValid = trajectoryModule.SettingsValid;
+        }
+        else
+            trajectoryValid = false;
+        trajectoryChanged = false;
         Vector3 newPosition;
 
         // Set position of grating
@@ -690,6 +736,10 @@ public class MoleculeExperiment : UdonSharpBehaviour
             apertureCounts.x = colCount; apertureCounts.y = rowCount;
             apertureSize.x = holeWidth; apertureSize.y = holeHeight; 
             aperturePitches.x = colPitch; aperturePitches.y = rowPitch;
+            gratingMarkerSize = experimentScale * Mathf.Min(gratingControl.ApertureHeightMetres, gratingControl.ApertureWidthMetres);
+            if (hasGratingDecorator)
+                gratingDecals.ParticleSize = gratingMarkerSize;
+
             if (horizChanged && horizReady && apertureCounts.x > 0)
                 horizontalScatter.SetGratingByPitch(apertureCounts.x, apertureSize.x, aperturePitches.x, minDeBroglieWL);
             if (vertChanged && vertReady && apertureCounts.y > 0)
@@ -712,7 +762,8 @@ public class MoleculeExperiment : UdonSharpBehaviour
         polltime -= Time.deltaTime;
         if (polltime > 0)
             return;
-        polltime = 0.3f;
+        polltime += ScaleIsChanging ? 0.1f : 0.3f;
+        
         if (hasVerticalScatter && !vertReady)
         {
             vertReady = verticalScatter.Started;
@@ -741,10 +792,11 @@ public class MoleculeExperiment : UdonSharpBehaviour
             //Debug.Log("Got Grating");
         }
 
-        bool updateUI = planckChanged || gravityChanged || settingsChanged;
+        bool updateUI = planckChanged || gravityChanged || settingsChanged || trajectoryChanged;
+        trajectoryChanged = trajectoryChanged || gravityChanged;
         if (gravityChanged)
             updateGravity();
-        if (settingsChanged || planckChanged)
+        if (settingsChanged || planckChanged || trajectoryChanged)
             updateSettings();
         if (hasGrating)
         {
@@ -765,6 +817,10 @@ public class MoleculeExperiment : UdonSharpBehaviour
 
     void Start()
     {
+        if (trajectoryModule == null)
+            trajectoryModule = GetComponent<TrajectoryModule>();
+        hasTrajectoryModule = trajectoryModule != null;
+
         hasGratingDecorator = gratingDecals != null;
 
         if (gratingControl != null)
@@ -811,5 +867,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
         PlanckIndex = planckIndex;
         gravityChanged = true;
         settingsChanged = true;
+        trajectoryChanged = true;
     }
 }
