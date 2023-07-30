@@ -13,6 +13,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
     [Tooltip("Particle speed at middle of range")]
     public float avgMoleculeSpeed=150;
     public float molecularWeight = 514.5389f;
+    public string moleculeName = "Pthalocyanine";
     [Header("Constants")]
     [SerializeField,UdonSynced,FieldChangeCallback(nameof(UseQuantumScatter))] private bool useQuantumScatter;
     public float h = 6.62607015e-34f; // 
