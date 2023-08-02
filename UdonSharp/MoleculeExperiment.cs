@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using TMPro;
 using UdonSharp;
 using UnityEngine;
@@ -14,6 +13,11 @@ public class MoleculeExperiment : UdonSharpBehaviour
     public float avgMoleculeSpeed=150;
     public float molecularWeight = 514.5389f;
     public string moleculeName = "Pthalocyanine";
+
+    [Header("Grating and Detector Distances")]
+    public float L1mm = 200;
+    public float L2mm = 561;
+
     [Header("Constants")]
     [SerializeField,UdonSynced,FieldChangeCallback(nameof(UseQuantumScatter))] private bool useQuantumScatter;
     public float h = 6.62607015e-34f; // 
@@ -261,9 +265,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
     bool trajectoryValid = false;
     [SerializeField]
     TrajectoryModule trajectoryModule;
-    [Header("Grating and Detector Distances")]
-    public float L1mm = 200;
-    public float L2mm = 564;
     [Header("UI Elements")]
     [SerializeField] TextMeshProUGUI gravityLabel;
     [SerializeField] TextMeshProUGUI planckLabel;
