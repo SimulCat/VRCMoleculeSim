@@ -247,8 +247,8 @@ public class QuantumScatter : UdonSharpBehaviour
             nextTick = 1;
             if (gotSettings && (settingsChanged || (!settingsLoaded)))
                 Recalc();
-            else
-                Debug.Log("QS NoChange");
+            //else
+            //    Debug.Log("QS NoChange");
         }
     }
 
