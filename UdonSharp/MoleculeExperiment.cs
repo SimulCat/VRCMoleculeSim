@@ -602,11 +602,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
                                 if (hasVerticalScatter)
                                     unitX.y = verticalScatter.RandomImpulseFrac(speedFraction);
                                 unitX.x = Mathf.Sqrt(1 - Mathf.Clamp01(unitX.z * unitX.z + unitX.y * unitX.y));
-                                /*
-                                if (vertScatter != null)
-                                {
-                                    vUpdated.y += (vertScatter.RandomImpulse * _planckToDeltaV);
-                                }*/
                                 particles[i].velocity = unitX * (speedFraction * maxSimSpeed);
                             }
                         }
