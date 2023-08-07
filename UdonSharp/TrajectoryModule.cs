@@ -147,15 +147,15 @@ public class TrajectoryModule : UdonSharpBehaviour
         } 
     }
 
-    [SerializeField] bool hasGravity;
-    public bool HasGravity
+    [SerializeField] bool useGravity;
+    public bool UseGravity
     {
-        get => hasGravity;
+        get => useGravity;
         set
         {
-            if (value != hasGravity)
+            if (value != useGravity)
             {
-                hasGravity = value;
+                useGravity = value;
                 settingsValid = false;
             }
         }
@@ -163,7 +163,7 @@ public class TrajectoryModule : UdonSharpBehaviour
 
     public void loadSettings(float speedMax, float speedMin, float gravitySimArg, bool hasGravityArg, float gratingDistanceArg)
     {
-        HasGravity = hasGravityArg;
+        UseGravity = hasGravityArg;
         GravitySim = gravitySimArg;
         SpeedMinMax = new Vector2(speedMin, speedMax);
         GratingDistance = gratingDistanceArg;
@@ -187,7 +187,7 @@ public class TrajectoryModule : UdonSharpBehaviour
             float frac = (float)i / (lookupPoints-1);
             launchVelocities[i] = new Vector3(Mathf.Lerp(speedMinMax.x, speedMinMax.y, frac), 0, 0);
             deltaT = gratingDistance/ launchVelocities[i].x ;
-            vY = hasGravity ? -0.5 * deltaT*gravitySim : 0.0;
+            vY = useGravity ? -0.5 * deltaT*gravitySim : 0.0;
             launchVelocities[i].y = (float)vY;
             Color l = lerpColour(frac);
             launchColours[i] = l;

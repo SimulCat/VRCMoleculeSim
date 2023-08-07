@@ -11,34 +11,47 @@ public class MoleculeExperiment : UdonSharpBehaviour
 {
     [Tooltip("Particle speed at middle of range")]
     public float avgMoleculeSpeed=150;
+    [SerializeField, Range(0f, 0.7f), Tooltip("Fraction of avg velocity +- e.g. 0.5 = +-50% of average")]
+    private float randomRange = 0.6f;
+    [Tooltip("Slow Motion"), SerializeField, Range(0.001f, 1f)]
+    private float slowMotion = 0.025f;
+
     public float molecularWeight = 514.5389f;
     public string moleculeName = "Pthalocyanine";
+    [Header("Operating Settings")]
+    [SerializeField,ColorUsage(true,true)]
+    Color defaultColour = Color.green;
+    [Tooltip("Default Particle Size"), SerializeField, UdonSynced, FieldChangeCallback(nameof(ParticleStartSize))]
+    float particleStartSize = 0.001f;
+    [SerializeField, Range(0.1f, 3f), UdonSynced, FieldChangeCallback(nameof(BeamVisibility))] float beamVisibility = 3;
+
+    [SerializeField]
+    bool useMonochrome = false;
+    [SerializeField, UdonSynced, FieldChangeCallback(nameof(UseQuantumScatter))] private bool useQuantumScatter;
+    [SerializeField, UdonSynced, FieldChangeCallback(nameof(UseGravity))]
+    private bool  useGravity = true;
 
     [Header("Grating and Detector Distances")]
     public float L1mm = 200;
     public float L2mm = 561;
 
     [Header("Constants")]
-    [SerializeField,UdonSynced,FieldChangeCallback(nameof(UseQuantumScatter))] private bool useQuantumScatter;
     public float h = 6.62607015e-34f; // 
     public float AMU_ToKg = 1.66054e-27f;
 
     [Header("Gravity")]
-    [SerializeField, UdonSynced, FieldChangeCallback(nameof(HasGravity))]
-    private bool hasGravity;
-
+    private bool gravityChanged = false;
     private bool settingsChanged = false;
     private bool planckChanged = false;
-    private bool gravityChanged = false;
     private bool trajectoryChanged = false;
-    public bool HasGravity
+    public bool UseGravity
     {
-        get => hasGravity;
+        get => useGravity;
         set
         {
-            if (hasGravity != value)
+            if (useGravity != value)
             {
-                hasGravity = value;
+                useGravity = value;
                 gravityChanged = true;
             }
             if ((togGravity != null) && (togGravity.isOn != value))
@@ -48,19 +61,19 @@ public class MoleculeExperiment : UdonSharpBehaviour
     }
     [SerializeField]
     private float gravityAcceleration; // Required because forceoverlifetime is hidden and must be copied here    ParticleSystem.MainModule mainModule;
-    [SerializeField]
+
+    //[Header("Calculated Scale Values")]
+    //[SerializeField]
     private float gravitySim;
-
-    [Header("Scaled Values")]
-    [SerializeField]
+    //[SerializeField]
     private float emitToGratingSim;
-    [SerializeField]
+    //[SerializeField]
     private float gratingToTargetSim;
-    [SerializeField]
-    private float minLifeTimeAfterGrating = 20f;
+    //[SerializeField]
+    private float maxLifetimeAfterGrating = 20f;
 
 
-    [Header("Scaling")]
+    [Header("Scaling Control")]
 
     private int gravityScale = 10;
     private int GravityScale
@@ -72,6 +85,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
             {
                 gravityScale = value;
                 gravityChanged = true;
+                Debug.Log("Grav Scale=" + gravityScale.ToString());
             }
         }
     }
@@ -91,10 +105,8 @@ public class MoleculeExperiment : UdonSharpBehaviour
         }
     }
 
-    [Tooltip("Slow Motion"),SerializeField, Range(0.001f, 1f)]
-    private float slowFactor = 0.03f;
-    [SerializeField]
-    private float slowScaled = 0.03f;
+    //[SerializeField]
+    private float slowScaled = 0.025f;
     [SerializeField,UdonSynced,FieldChangeCallback(nameof(ScaleIsChanging))] 
     private bool scaleIsChanging = true;
     private bool ScaleIsChanging
@@ -159,7 +171,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
             {
                 experimentScale = value;
                 graphicsScale = experimentScale / NativeGraphicsRatio;
-                slowScaled = slowFactor * graphicsScale;
+                slowScaled = slowMotion * graphicsScale;
                 emitToGratingSim = -(L1mm * experimentScale) / 1000;
                 gratingToTargetSim = (L2mm * experimentScale) / 1000;
                 settingsChanged = true;
@@ -172,8 +184,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
     [Header("Speed Calculations")]
     [SerializeField]
     private float avgSimulationSpeed = 5f;
-    [SerializeField, Range(0f,0.7f),Tooltip("Fraction of avg velocity +- e.g. 0.5 = +-50% of average")]
-    private float randomRange= 0.6f;
     [SerializeField]
     private float maxSimSpeed;
     [SerializeField]
@@ -212,8 +222,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
     Transform targetProp;
     [SerializeField]
     ParticleSystem particleEmitter;
-    [Tooltip("Default Particle Size"), SerializeField, UdonSynced, FieldChangeCallback(nameof(ParticleStartSize))]
-    float particleStartSize = 0.001f;
 
     public float ParticleStartSize
     {
@@ -241,10 +249,10 @@ public class MoleculeExperiment : UdonSharpBehaviour
     [SerializeField]
     Vector3 targetPosition = Vector3.zero;
     float gratingThickness = 0.001f;
+    //[SerializeField]
+    //Transform floorTransform;
     [SerializeField]
     TargetDisplay floorDisplay;
-    [SerializeField]
-    Transform floorTransform;
     [SerializeField]
     Transform targetTransform;
     [SerializeField]
@@ -254,15 +262,21 @@ public class MoleculeExperiment : UdonSharpBehaviour
     [SerializeField]
     bool hasFloor;
     [SerializeField]
+    bool hasFloorDecorator;
+    [SerializeField]
     bool hasTarget;
+    [SerializeField]
     bool hasTargetDecorator;
+    [SerializeField]
     bool hasGrating;
+    [SerializeField]
     bool hasGratingDecorator;
     bool hasSource;
     bool hasHorizontalScatter;
     bool hasVerticalScatter;
     bool hasTrajectoryModule = false;
     bool trajectoryValid = false;
+
     [SerializeField]
     TrajectoryModule trajectoryModule;
     [Header("UI Elements")]
@@ -284,7 +298,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
             if (targetPointScale != value)
             {
                 targetPointScale = value;
-                setMarkerSizes(targetPointScale);
+                setMarkerSizes(targetPointScale/2.0f);
                 if (targetScaleSlider != null)
                     targetScaleSlider.SetValues(targetPointScale, 0.1f, 2.0f);
             }
@@ -294,35 +308,64 @@ public class MoleculeExperiment : UdonSharpBehaviour
 
     public SyncedSlider beamScaleSlider;
 
-    [SerializeField, Range(0.1f, 3f), UdonSynced, FieldChangeCallback(nameof(BeamScale))] float beamScale = 1;
-    public float BeamScale
+    public float BeamVisibility
     {
-        get => beamScale;
+        get => beamVisibility;
         set
         {
             value = Mathf.Clamp(value, 0.1f, 4.0f);
-            if (beamScale != value)
+            if (beamVisibility != value)
             {
-                beamScale = value;
+                beamVisibility = value;
                 if (hasSource)
-                    mainModule.startSize = particleStartSize * beamScale * Mathf.Sqrt(experimentScale);
+                    mainModule.startSize = particleStartSize * beamVisibility * Mathf.Sqrt(experimentScale);
                 if (beamScaleSlider != null)
-                    beamScaleSlider.SetValues(beamScale, 0.1f, 4.0f);
+                    beamScaleSlider.SetValues(beamVisibility, 0.1f, 4.0f);
             }
             RequestSerialization();
         }
     }
 
-    [Header("Debug Values")]
-
-    public float minDeBroglieWL = 0.1f; // h/mv
+    //[Header("Debug Values")]
     //[SerializeField]
-    //private float minDeBroglieSim = 0.1f;
+    private float minDeBroglieWL = 0.1f; // h/mv
+    //[SerializeField]
+    private bool horizReady = false;
+    //[SerializeField]
+    private bool vertReady = false;
+    //[SerializeField]
+    private bool gratingReady = false;
 
-    ParticleSystem.MainModule mainModule;
+    [Tooltip("Index of Gravity Multiplier"), UdonSynced, FieldChangeCallback(nameof(GravityIndex))]
+    private int gravityIndex = 0;
+    private int GravityIndex
+    {
+        set
+        {
+            gravityIndex = CheckScaleIndex(value, scaleSteps);
+            GravityScale = scaleSteps[gravityIndex];
+            RequestSerialization();
+        }
+    }
 
-    ParticleSystem.Particle[] particles = null;
-    int numParticles;
+    [Tooltip("Index of Planck Multiplier"), UdonSynced, FieldChangeCallback(nameof(PlanckIndex))]
+    private int planckIndex = 0;
+    private int PlanckIndex
+    {
+        set
+        {
+            planckIndex = CheckScaleIndex(value, planckSteps);
+            PlanckScale = planckSteps[planckIndex];
+            RequestSerialization();
+        }
+    }
+
+
+    // Internal Variables
+    private ParticleSystem.MainModule mainModule;
+
+    private ParticleSystem.Particle[] particles = null;
+    private int numParticles;
 
     void setText(TextMeshProUGUI tmproLabel, string text)
     {
@@ -344,38 +387,13 @@ public class MoleculeExperiment : UdonSharpBehaviour
         setText(planckScaleLabel, string.Format("h x {0}", PlanckScale));
     }
 
-    private int[] scaleSteps = { 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000 };
-    private int[] planckSteps = { 1, 5, 10, 50, 100, 500, 1000, 5000, 10000, 50000 };
+    private int[] scaleSteps = { 1, 2, 5, 10, 15, 20, 50, 100, 200, 500, 1000 };
+    private int[] planckSteps = { 1, 5, 10, 50, 100, 500, 1000 };
 
     private int CheckScaleIndex(int newIndex , int[] steps)
     {
         return Mathf.Clamp(newIndex, 0, steps.Length - 1);
     }
-
-    [Tooltip("Index of Gravity Multiplier"),SerializeField,UdonSynced,FieldChangeCallback(nameof(GravityIndex))]
-    private int gravityIndex = 0;
-    private int GravityIndex
-    {
-        set
-        {
-            gravityIndex = CheckScaleIndex(value,scaleSteps);
-            GravityScale = scaleSteps[gravityIndex];
-            RequestSerialization();
-        }
-    }
-
-    [Tooltip("Index of Planck Multiplier"),SerializeField, UdonSynced, FieldChangeCallback(nameof(PlanckIndex))]
-    private int planckIndex = 0;
-    private int PlanckIndex
-    {
-        set
-        {
-            planckIndex = CheckScaleIndex(value, planckSteps);
-            PlanckScale = planckSteps[planckIndex];
-            RequestSerialization();
-        }
-    }
-
     public void OnGravScaleDown()
     {
         GravityIndex = gravityIndex-1;
@@ -396,10 +414,10 @@ public class MoleculeExperiment : UdonSharpBehaviour
     }
     public void OnGravityToggle()
     {
-        bool newGravity = !hasGravity;
+        bool newGravity = !useGravity;
         if (togGravity != null)
             newGravity  = togGravity.isOn;
-        HasGravity = newGravity;
+        UseGravity = newGravity;
     }
 
     public void OnQuantumToggle()
@@ -410,36 +428,30 @@ public class MoleculeExperiment : UdonSharpBehaviour
         UseQuantumScatter = newQuantum;
     }
 
-    Color calcParticleColor(float delta)
+    private int fadeParticle(int particleIndex)
     {
-        delta -= 0.5f;
-        float t;
-        Color result;
-        {
-            if (delta <= -0.1)
-            {
-                t = (delta + 0.5f) * 2.5f;
-                result = new Color(Mathf.Lerp(1.0f, 0.0f, t), Mathf.Lerp(0.0f, 1.0f, t), 0);
-            }
-            else if (delta <= 0.2f)
-            {
-                t = (delta + 0.1f) * 3.33330f;
-                result = new Color(0, 1, Mathf.Lerp(0.0f, 1.0f, t));
-            }
-            else if (delta <= 0.3f)
-            {
-                t = (delta - 0.1f) * 5.0f;
-                result = new Color(0, Mathf.Lerp(1.0f, 0.0f, t), 1);
-            }
-            else
-            {
-                t = (delta - 0.3f) * 5.0f;
-                result = new Color(Mathf.Lerp(0.0f, 0.5f, t), 0, Mathf.Lerp(1.0f, 0.5f, t));
-            }
-        }
-        return result;
+        particles[particleIndex].velocity = Vector3.zero;
+        particles[particleIndex].startLifetime = 43;
+        particles[particleIndex].remainingLifetime = 0.5f;
+        return 43;
     }
 
+    private int fadeParticleColour(int particleIndex,Color theColour)
+    {
+        particles[particleIndex].velocity = Vector3.zero;
+        particles[particleIndex].startLifetime = 43;
+        particles[particleIndex].remainingLifetime = 0.5f;
+        particles[particleIndex].startColor = theColour;
+        return 43;
+    }
+
+    private int killParticle(int particleIndex)
+    {
+        particles[particleIndex].velocity = Vector3.zero;
+        particles[particleIndex].startLifetime = 43;
+        particles[particleIndex].remainingLifetime = 0f;
+        return 42;
+    }
 
     private void LateUpdate()
     {
@@ -447,8 +459,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
         Vector3 launchVelocity;
         Vector3 launchPosition;
         float speedScale;
-        float timeToGrating;
-        double particleFallVelocity;
 
         if (hasSource)
         {
@@ -462,12 +472,12 @@ public class MoleculeExperiment : UdonSharpBehaviour
 
             for (int i = 0; i < numParticles; i++)
             {
-                // Startlifetime stores the state; < 10 means newborn
-                if (particles[i].startLifetime < 10)
+                int particleStage = Mathf.RoundToInt(particles[i].startLifetime);
+                // particleStage < 10 means newborn (unlaunched)
+                if (particleStage < 10)
                 {
                     nUpdated++;
-                    particles[i].startLifetime = 250;
-                    particles[i].randomSeed = 250;
+                    particleStage = 250;
                     particles[i].remainingLifetime = 100;
                     launchPosition = new Vector3(gratingThickness, spreadHigh, spreadWide);
                     particles[i].axisOfRotation = launchPosition;
@@ -476,136 +486,140 @@ public class MoleculeExperiment : UdonSharpBehaviour
                     speedScale = 1 + Mathf.Lerp(-randomRange, randomRange, speedTrim);
                     float particleSpeed = avgSimulationSpeed * speedScale;
                     launchVelocity = new Vector3(particleSpeed, 0, 0);
-                    Color launchColour;
+                    Color launchColour = defaultColour;
+                    uint particleIndex = 0;
                     if (trajectoryValid)
                     {
                         int velocityIndex = (int)Mathf.Lerp(0, trajectoryModule.LookupPoints, speedTrim);
                         launchVelocity = trajectoryModule.lookupVelocity(velocityIndex);
-                        launchColour = trajectoryModule.lookupColour(velocityIndex);
+                        if (!useMonochrome)
+                            launchColour = trajectoryModule.lookupColour(velocityIndex);
                     }
-                    else 
-                    { 
-                        if (hasGravity)
-                        {
-                            timeToGrating = emitToGratingSim / particleSpeed;
-                            particleFallVelocity = timeToGrating * gravitySim; // V=AT
-                            //particleHeightDelta = 0.5d * timeToGrating * particleFallVelocity; // s = 0.5 AT^2
-
-                            launchVelocity.y = (float)(-particleFallVelocity/2.0); // Calculate initial upward velocity.
-                            //launchPosition.y += (float)particleHeightDelta;
-                        }
-                        launchColour = calcParticleColor(speedTrim);
-                    }
+                    particles[i].velocity = launchVelocity;
+                    launchVelocity.y = -launchVelocity.y;
                     particles[i].rotation3D = launchVelocity;
                     particles[i].position = launchPosition;
-                    particles[i].velocity = launchVelocity;
                     particles[i].startColor = launchColour;
-                    //Debug.Log(tmpVel);
-                    //particles[i].rotation = particleSpeed;
-                    /*    
-                    else
-                    {
-                        speedScale = 1 + Mathf.Lerp(-randomRange, randomRange, speedTrim);
-                        float particleSpeed = avgSimulationSpeed * speedScale;
-                        launchVelocity = new Vector3(particleSpeed, 0, 0);
-                        if (hasGravity)
-                        {
-                            timeToGrating = emitToGratingSim / particleSpeed;
-                            particleFallVelocity = timeToGrating * gravitySim; // V=AT
-                            //particleHeightDelta = 0.5d * timeToGrating * particleFallVelocity; // s = 0.5 AT^2
-                            launchVelocity.y = (float)(-particleFallVelocity/2.0); // Calculate initial upward velocity.
-                            //launchPosition.y += (float)particleHeightDelta;
-                        }
-                    } */
+                    particles[i].startLifetime = particleStage;
+                    particles[i].randomSeed = particleIndex;
                 }
-                else
-                {   // Particles below 50 are deemed stopped already and are fading
-                    // Any Above 50 and stopped have collided with something and need to be handled
-                    uint particleStage = particles[i].randomSeed;
-                    float x = particles[i].position.x;
-                    float particleGratingDelta = x-gratingPosition.x;
-                    bool processedGrating = particleStage <= 240;
-                    bool afterGrating = (particleGratingDelta >= gratingThickness);
-                    float particleTargetDelta = x-targetPosition.x;
-                    if (particleStage >= 50)
-                    {   // Handles Stopped Particle
-                        if (particles[i].velocity.x < 0.01)
+                else // not a newborn
+                {
+                    bool particleChanged = false;
+                    Vector3 particlePos = particles[i].position;
+                    bool afterTarget = particlePos.x > (targetPosition.x+0.1f) && particleStage > 50;
+                    if (afterTarget) // Stray
+                    {
+                        particleStage = fadeParticle(i);
+                        nUpdated++;
+                    }
+                    if (particleStage > 50)
+                    {
+                        Vector3 particleVelocity = particles[i].velocity;
+                        float particleGratingDelta = particlePos.x - gratingPosition.x;
+                        // Any Above 50 and stopped have collided with something and need to be handled
+                        float particleTargetDelta = particlePos.x - targetPosition.x;
+                        bool preGratingFilter = particleStage > 240;
+                        bool stopped = (particleVelocity.x < 0.01f);
+                        // Handle Stopped Particle
+                        if (stopped)
                         {
-                            Vector3 decalPos = particles[i].position;
-                            Vector3 contactVelocity = particles[i].rotation3D;
-                            contactVelocity.y = -contactVelocity.y;
-                            if (processedGrating)
-                            {
-                                particleStage = 43;
-                                bool atTarget = hasTarget && (particleTargetDelta >= -0.01f);
-                                bool atFloor = hasFloor && (!atTarget);
-                                if (atTarget)
-                                {
-                                    if (hasTargetDecorator)
-                                        targetDisplay.PlotParticle(decalPos, particles[i].startColor, 30f);
-                                    particles[i].remainingLifetime = 0;
-                                }
-                                else if (atFloor)
-                                {
-                                    floorDisplay.PlotParticle(decalPos, particles[i].startColor, 30f);
-                                    particles[i].remainingLifetime = 0;
-                                    particles[i].velocity = Vector3.zero;
-                                }
-                                else // Anywhere else
-                                {
-                                    particles[i].velocity = Vector3.zero;
-                                    particles[i].startSize = particles[i].startSize * 0.3f;
-                                    particles[i].remainingLifetime = 5;
-                                }
-                            }
-                            else
+                            Vector3 collideVelocity = particles[i].rotation3D;
+                            //
+                            // Process impact of particle stopping after initial launch
+                            if (preGratingFilter)
                             { // Stopped and not processed for grating
+                              // Now test to see if stopped at grating
                                 if (Mathf.Abs(particleGratingDelta) <= 0.01f)
                                 { // Here if close to grating
-                                    Vector3 upDatedPosition = particles[i].axisOfRotation;
-                                    if (hasGrating)
-                                        afterGrating = !gratingControl.checkLatticeCollision(upDatedPosition);
-                                    if (afterGrating)
+                                    Vector3 gratingHitPosition = particles[i].axisOfRotation;
+                                    if (hasGrating && (!gratingControl.checkLatticeCollision(gratingHitPosition)))
                                     {
-                                        particles[i].position = upDatedPosition;
-                                        particles[i].velocity = contactVelocity;
+                                        particlePos = gratingHitPosition;
+                                        particleVelocity = collideVelocity;
+                                        particleStage = 240;
+                                        particleChanged = true;
                                     }
                                     else
                                     {
-                                        upDatedPosition.x = decalPos.x;
+                                        gratingHitPosition.x = particlePos.x;
                                         if (hasGratingDecorator)
-                                            gratingDecals.PlotParticle(upDatedPosition, particles[i].startColor, 0.5f);
-                                        particles[i].remainingLifetime = 0;
-                                        particleStage = 43;
+                                        {
+                                            gratingDecals.PlotParticle(gratingHitPosition, particles[i].startColor, 0.5f);
+                                            particleStage = killParticle(i);
+                                        }
+                                        else
+                                            particleStage = fadeParticle(i);
+                                        nUpdated++;
                                     }
                                 }
                                 else
                                 {
-                                    particles[i].velocity = Vector3.zero;
-                                    particles[i].startSize = particles[i].startSize * 0.1f;
-                                    particles[i].remainingLifetime = 5;
+                                    particleStage = fadeParticle(i);
+                                    nUpdated++;
                                 }
                             }
-                            nUpdated++;
-                        }
-                        if (afterGrating && particleStage > 240)
+                            else
+                            { // Stopped and after grating use particle for decal or erase
+                                bool atTarget = hasTarget && (particleTargetDelta >= -0.01f);
+                                bool atFloor = hasFloor && (!atTarget);
+                                nUpdated++;
+                                if (atTarget)
+                                {
+                                    if (hasTargetDecorator)
+                                    {
+                                        targetDisplay.PlotParticle(particlePos, particles[i].startColor, 30f);
+                                        particleStage = killParticle(i);
+                                    }
+                                    else
+                                    {
+                                        particleStage = fadeParticle(i);
+                                    }
+                                }
+                                else if (atFloor)
+                                {
+                                    floorDisplay.PlotParticle(particlePos, particles[i].startColor, 30f);
+                                    particleStage = killParticle(i);
+                                }
+                                else // Anywhere else
+                                    particleStage = fadeParticle(i);
+                            }
+                        } // Stopped
+                        if (particleStage == 240)
                         {
-                            nUpdated++;
-                            particleStage = 240;
-                            float speedFraction = particles[i].rotation3D.x / maxSimSpeed;
-                            particles[i].remainingLifetime = minLifeTimeAfterGrating / speedFraction;
+                            float speedFraction = particleVelocity.x / maxSimSpeed;
+                            float speedRestore = (maxSimSpeed * speedFraction);
+                            Vector3 unitVecScatter = Vector3.right;
+                            particles[i].remainingLifetime = maxLifetimeAfterGrating;
+                            particleChanged = true;
+                            particleStage = 239;
                             if (useQuantumScatter)
                             {
-                                Vector3 unitX = Vector3.right;
+                                float sY=0,sZ=0;
                                 if (hasHorizontalScatter)
-                                    unitX.z = horizontalScatter.RandomImpulseFrac(speedFraction); // * planckValue);
+                                {
+                                    sZ = horizontalScatter.RandomImpulseFrac(speedFraction);
+                                    unitVecScatter.z = sZ;
+                                }
+
                                 if (hasVerticalScatter)
-                                    unitX.y = verticalScatter.RandomImpulseFrac(speedFraction);
-                                unitX.x = Mathf.Sqrt(1 - Mathf.Clamp01(unitX.z * unitX.z + unitX.y * unitX.y));
-                                particles[i].velocity = unitX * (speedFraction * maxSimSpeed);
+                                {
+                                    sY = verticalScatter.RandomImpulseFrac(speedFraction);
+                                    unitVecScatter.y = sY;
+                                }
+                                unitVecScatter.x = Mathf.Sqrt(1 - Mathf.Clamp01(sY * sY + sZ * sZ));
+                                Vector3 updateV = unitVecScatter * speedRestore;
+                                updateV.y += particleVelocity.y;
+                                particleVelocity = updateV;
                             }
                         }
-                        particles[i].randomSeed = particleStage;
+                        if (particleChanged)
+                        {
+                            particles[i].startLifetime = particleStage;
+                            particles[i].velocity = particleVelocity;
+                            particles[i].position = particlePos;
+                            nUpdated++;
+                        }
                     }
                 }
             }
@@ -621,19 +635,19 @@ public class MoleculeExperiment : UdonSharpBehaviour
     {
         if (!hasSource || scaleIsChanging)
             return;
-        Debug.Log("Update Grav");
+        Debug.Log("Update Gravity!!!");
         gravityChanged = false;
-        gravitySim = hasGravity ? GravityScale * gravityAcceleration * (slowScaled * slowScaled) / experimentScale : 0.0f;
+        gravitySim = useGravity ? GravityScale * gravityAcceleration * (slowScaled * slowScaled) / experimentScale : 0.0f;
         var fo = particleEmitter.forceOverLifetime;
         fo.enabled = false;
         fo.y = gravitySim;
-        fo.enabled = hasGravity;
+        fo.enabled = useGravity;
         particleEmitter.Clear(); // Restart.
         particleEmitter.Play();
         if (hasTrajectoryModule)
         {
             trajectoryModule.GravitySim = gravitySim;
-            trajectoryModule.HasGravity = hasGravity;
+            trajectoryModule.UseGravity = useGravity;
         }
     }
     private float targetMarkerSize = 1;
@@ -641,16 +655,18 @@ public class MoleculeExperiment : UdonSharpBehaviour
     private void setMarkerSizes(float value)
     {
         float mul = particleStartSize * experimentScale / nativeGraphicsRatio;
-        targetMarkerSize = Mathf.Lerp(0.1f,1,value) * mul *.3f;
+        targetMarkerSize = Mathf.Lerp(0.1f,1,value) * mul;
         if (hasTargetDecorator)
             targetDisplay.ParticleSize = targetMarkerSize;
+        if (hasFloorDecorator)
+            floorDisplay.ParticleSize = targetMarkerSize;
     }
 
     private void dissolveDisplays()
     {
         if (hasSource)
             particleEmitter.Clear();
-        if (hasFloor)
+        if (hasFloorDecorator)
             floorDisplay.Dissolve();
         if (hasTargetDecorator)
             targetDisplay.Dissolve();
@@ -661,18 +677,18 @@ public class MoleculeExperiment : UdonSharpBehaviour
     private void updateSettings()
     {
         if (hasSource) 
-            mainModule.startSize = particleStartSize * beamScale * Mathf.Sqrt(experimentScale);
+            mainModule.startSize = particleStartSize * beamVisibility * Mathf.Sqrt(experimentScale);
         setMarkerSizes(targetPointScale);
         settingsChanged = false;
         avgSimulationSpeed = avgMoleculeSpeed * slowScaled;
         
         maxSimSpeed = avgSimulationSpeed * (1 + randomRange);
         minSimSpeed = avgSimulationSpeed * (1 - randomRange);
-        minLifeTimeAfterGrating = 1.25f * gratingToTargetSim / maxSimSpeed;
+        maxLifetimeAfterGrating = 1.25f * gratingToTargetSim / minSimSpeed;
         minDeBroglieWL = (h * PlanckScale) / (AMU_ToKg * molecularWeight * avgMoleculeSpeed*(1+randomRange));
         if (hasTrajectoryModule)
         {
-            trajectoryModule.loadSettings(maxSimSpeed, minSimSpeed, gravitySim, hasGravity, emitToGratingSim);
+            trajectoryModule.loadSettings(maxSimSpeed, minSimSpeed, gravitySim, useGravity, emitToGratingSim);
             trajectoryValid = trajectoryModule.SettingsValid;
         }
         else
@@ -747,12 +763,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
     }
 
     float polltime = 1;
-    [SerializeField]
-    bool horizReady = false;
-    [SerializeField]
-    bool vertReady = false;
-    [SerializeField]
-    bool gratingReady = false;
 
     private void Update()
     {
@@ -844,11 +854,12 @@ public class MoleculeExperiment : UdonSharpBehaviour
         if (targetScaleSlider != null)
             targetScaleSlider.SetValues(targetPointScale, 0.1f, 3.0f);
         if (beamScaleSlider != null)
-            beamScaleSlider.SetValues(beamScale, 0.1f, 4f);
+            beamScaleSlider.SetValues(beamVisibility, 0.1f, 4f);
 
         hasHorizontalScatter = (horizontalScatter != null);
         hasVerticalScatter = (verticalScatter != null);
-        hasFloor = floorDisplay != null;
+        //hasFloor = floorTransform != null;
+        hasFloorDecorator = floorDisplay != null;
         hasTarget = targetTransform != null;
         hasTargetDecorator = targetDisplay != null;
         if (hasTarget)
@@ -856,9 +867,8 @@ public class MoleculeExperiment : UdonSharpBehaviour
             targetPosition = targetTransform.position;
         }
         RandomRange = randomRange;
-        minLifeTimeAfterGrating = 1.25f * gratingToTargetSim / maxSimSpeed;
         // Initialise checkboxes if present.
-        HasGravity = hasGravity;
+        UseGravity = useGravity;
         UseQuantumScatter = useQuantumScatter;
         GravityIndex = gravityIndex;
         PlanckIndex = planckIndex;
