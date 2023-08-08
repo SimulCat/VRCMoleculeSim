@@ -125,8 +125,8 @@ public class MoleculeExperiment : UdonSharpBehaviour
                         targetDisplay.Clear();
                     //if (hasFloorDecorator)
                     //    floorDisplay.Clear();
-                    if (hasGratingDecorator)
-                        gratingDecals.Clear();
+                    //if (hasGratingDecorator)
+                    //    gratingDecals.Clear();
                 }
                 else
                 {
@@ -229,8 +229,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
             markerLifetime = value;
             if (hasTargetDecorator)
                 targetDisplay.MarkerLifetime = markerLifetime;
-            //if (hasFloorDecorator)
-            //    floorDisplay.MarkerLifetime = markerLifetime;
             RequestSerialization();
         }
     }
@@ -342,9 +340,9 @@ public class MoleculeExperiment : UdonSharpBehaviour
     private bool vertReady = false;
     //[SerializeField]
     private bool gratingReady = false;
-    //[SerializeField]
+    [SerializeField]
     private float targetMarkerSize = 1;
-    //[SerializeField]
+    [SerializeField]
     private float gratingMarkerSize = 1;
 
 
@@ -556,14 +554,13 @@ public class MoleculeExperiment : UdonSharpBehaviour
                                         gratingHitPosition.x = particlePos.x;
                                         if (hasGratingDecorator)
                                         {
-                                            gratingDecals.PlotParticle(gratingHitPosition, particles[i].startColor, false, 0.5f);
+                                            gratingDecals.FadeParticle(gratingHitPosition, particles[i].startColor, false, gratingMarkerSize, 0.5f);
                                             //particleStage = killParticle(i);
                                             particleStage = 42;
                                             particles[i].velocity = Vector3.zero;
                                             particles[i].startLifetime = particleStage;
                                             particles[i].remainingLifetime = 0f;
                                             // %%%
-
                                         }
                                         else
                                         {
@@ -574,7 +571,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
                                             particles[i].startLifetime = particleStage;
                                             particles[i].startSize = gratingMarkerSize;
                                             particles[i].remainingLifetime = 0.6f;
-
                                             // %%%
                                         }
                                         nUpdated++;
@@ -715,8 +711,8 @@ public class MoleculeExperiment : UdonSharpBehaviour
         //    floorDisplay.Dissolve();
         if (hasTargetDecorator)
             targetDisplay.Dissolve();
-        if (hasGratingDecorator)
-            gratingDecals.Dissolve();
+        //if (hasGratingDecorator)
+        //    gratingDecals.Dissolve();
         Debug.Log("dissolveDisplays()");
     }
     private void updateSettings()
@@ -794,8 +790,8 @@ public class MoleculeExperiment : UdonSharpBehaviour
             apertureSize.x = holeWidth; apertureSize.y = holeHeight; 
             aperturePitches.x = colPitch; aperturePitches.y = rowPitch;
             gratingMarkerSize = experimentScale * Mathf.Min(gratingControl.ApertureHeightMetres, gratingControl.ApertureWidthMetres);
-            if (hasGratingDecorator)
-                gratingDecals.ParticleSize = gratingMarkerSize;
+            //if (hasGratingDecorator)
+            //    gratingDecals.ParticleSize = gratingMarkerSize;
 
             if (horizChanged && horizReady && apertureCounts.x > 0)
                 horizontalScatter.SetGratingByPitch(apertureCounts.x, apertureSize.x, aperturePitches.x, minDeBroglieWL);
