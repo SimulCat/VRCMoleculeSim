@@ -18,15 +18,13 @@ public class MoleculeExperiment : UdonSharpBehaviour
 
     public float molecularWeight = 514.5389f;
     public string moleculeName = "Pthalocyanine";
-    [Header("Operating Settings")]
-    [SerializeField,ColorUsage(true,true)]
-    Color defaultColour = Color.green;
-    [Tooltip("Default Particle Size"), SerializeField, UdonSynced, FieldChangeCallback(nameof(ParticleStartSize))]
-    float particleStartSize = 0.001f;
-    [SerializeField, Range(0.1f, 3f), UdonSynced, FieldChangeCallback(nameof(BeamVisibility))] float beamVisibility = 3;
+    [Header("Operating Settings-------")]
+    [Tooltip("Default Particle Size"), SerializeField, UdonSynced, FieldChangeCallback(nameof(ParticleStartSize))] private float particleStartSize = 0.001f;
+    [Tooltip("Decay time of particles at target"), SerializeField, Range(0.5f, 20f), UdonSynced, FieldChangeCallback(nameof(MarkerLifetime))] float markerLifetime = 15;
+    [Tooltip("Exxagerate/Suppress Beam Particle Size"),SerializeField, Range(0.1f, 3f), UdonSynced, FieldChangeCallback(nameof(BeamVisibility))] float beamVisibility = 3;
+    [SerializeField, ColorUsage(true, true)] Color defaultColour = Color.green;
 
-    [SerializeField]
-    bool useMonochrome = false;
+    [SerializeField] bool useMonochrome = false;
     [SerializeField, UdonSynced, FieldChangeCallback(nameof(UseQuantumScatter))] private bool useQuantumScatter;
     [SerializeField, UdonSynced, FieldChangeCallback(nameof(UseGravity))]
     private bool  useGravity = true;
@@ -125,8 +123,8 @@ public class MoleculeExperiment : UdonSharpBehaviour
                     particleEmitter.Clear();
                     if (hasTargetDecorator)
                         targetDisplay.Clear();
-                    if (hasFloor)
-                        floorDisplay.Clear();
+                    //if (hasFloorDecorator)
+                    //    floorDisplay.Clear();
                     if (hasGratingDecorator)
                         gratingDecals.Clear();
                 }
@@ -223,6 +221,19 @@ public class MoleculeExperiment : UdonSharpBehaviour
     [SerializeField]
     ParticleSystem particleEmitter;
 
+    public float MarkerLifetime
+    {
+        get => markerLifetime;
+        set
+        {
+            markerLifetime = value;
+            if (hasTargetDecorator)
+                targetDisplay.MarkerLifetime = markerLifetime;
+            //if (hasFloorDecorator)
+            //    floorDisplay.MarkerLifetime = markerLifetime;
+            RequestSerialization();
+        }
+    }
     public float ParticleStartSize
     {
         get => particleStartSize;
@@ -231,8 +242,9 @@ public class MoleculeExperiment : UdonSharpBehaviour
             if (value != particleStartSize)
             {
                 particleStartSize = value;
-                RequestSerialization();
+                checkMarkerSizes();
             }
+            RequestSerialization();
         }
     }
 
@@ -244,32 +256,28 @@ public class MoleculeExperiment : UdonSharpBehaviour
     [SerializeField]
     GratingControl gratingControl;
     Transform gratingXfrm;
-    [SerializeField]
-    Vector3 gratingPosition = Vector3.zero;
-    [SerializeField]
-    Vector3 targetPosition = Vector3.zero;
     float gratingThickness = 0.001f;
-    //[SerializeField]
-    //Transform floorTransform;
-    [SerializeField]
-    TargetDisplay floorDisplay;
     [SerializeField]
     Transform targetTransform;
+    [SerializeField]
+    Transform floorTransform;
     [SerializeField]
     TargetDisplay targetDisplay;
     [SerializeField]
     TargetDisplay gratingDecals;
-    [SerializeField]
+    //[SerializeField]
+    Vector3 gratingPosition = Vector3.zero;
+    //[SerializeField]
+    Vector3 targetPosition = Vector3.zero;
+    //[SerializeField]
     bool hasFloor;
-    [SerializeField]
-    bool hasFloorDecorator;
-    [SerializeField]
+    //[SerializeField]
     bool hasTarget;
-    [SerializeField]
+    //[SerializeField]
     bool hasTargetDecorator;
-    [SerializeField]
+    //[SerializeField]
     bool hasGrating;
-    [SerializeField]
+    //[SerializeField]
     bool hasGratingDecorator;
     bool hasSource;
     bool hasHorizontalScatter;
@@ -298,10 +306,10 @@ public class MoleculeExperiment : UdonSharpBehaviour
             if (targetPointScale != value)
             {
                 targetPointScale = value;
-                setMarkerSizes(targetPointScale/2.0f);
-                if (targetScaleSlider != null)
-                    targetScaleSlider.SetValues(targetPointScale, 0.1f, 2.0f);
+                checkMarkerSizes();
             }
+            if (targetScaleSlider != null)
+                targetScaleSlider.SetValues(targetPointScale, 0.1f, 2.0f);
             RequestSerialization();
         }
     }
@@ -317,11 +325,10 @@ public class MoleculeExperiment : UdonSharpBehaviour
             if (beamVisibility != value)
             {
                 beamVisibility = value;
-                if (hasSource)
-                    mainModule.startSize = particleStartSize * beamVisibility * Mathf.Sqrt(experimentScale);
-                if (beamScaleSlider != null)
-                    beamScaleSlider.SetValues(beamVisibility, 0.1f, 4.0f);
+                checkMarkerSizes();
             }
+            if (beamScaleSlider != null)
+                beamScaleSlider.SetValues(beamVisibility, 0.1f, 4.0f);
             RequestSerialization();
         }
     }
@@ -335,6 +342,11 @@ public class MoleculeExperiment : UdonSharpBehaviour
     private bool vertReady = false;
     //[SerializeField]
     private bool gratingReady = false;
+    //[SerializeField]
+    private float targetMarkerSize = 1;
+    //[SerializeField]
+    private float gratingMarkerSize = 1;
+
 
     [Tooltip("Index of Gravity Multiplier"), UdonSynced, FieldChangeCallback(nameof(GravityIndex))]
     private int gravityIndex = 0;
@@ -428,7 +440,8 @@ public class MoleculeExperiment : UdonSharpBehaviour
         UseQuantumScatter = newQuantum;
     }
 
-    private int fadeParticle(int particleIndex)
+    /* %%%%%% Local methods not supported in U#
+    int fadeParticle(int particleIndex)
     {
         particles[particleIndex].velocity = Vector3.zero;
         particles[particleIndex].startLifetime = 43;
@@ -436,22 +449,15 @@ public class MoleculeExperiment : UdonSharpBehaviour
         return 43;
     }
 
-    private int fadeParticleColour(int particleIndex,Color theColour)
-    {
-        particles[particleIndex].velocity = Vector3.zero;
-        particles[particleIndex].startLifetime = 43;
-        particles[particleIndex].remainingLifetime = 0.5f;
-        particles[particleIndex].startColor = theColour;
-        return 43;
-    }
-
-    private int killParticle(int particleIndex)
+    int killParticle(int particleIndex)
     {
         particles[particleIndex].velocity = Vector3.zero;
         particles[particleIndex].startLifetime = 43;
         particles[particleIndex].remainingLifetime = 0f;
         return 42;
     }
+
+    // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% */
 
     private void LateUpdate()
     {
@@ -510,7 +516,12 @@ public class MoleculeExperiment : UdonSharpBehaviour
                     bool afterTarget = particlePos.x > (targetPosition.x+0.1f) && particleStage > 50;
                     if (afterTarget) // Stray
                     {
-                        particleStage = fadeParticle(i);
+                        //particleStage = fadeParticle(i);
+                        particles[i].velocity = Vector3.zero;
+                        particles[i].startLifetime = 43;
+                        particles[i].remainingLifetime = 0.5f;
+                        particleStage = 43;
+                        // %%%
                         nUpdated++;
                     }
                     if (particleStage > 50)
@@ -545,17 +556,38 @@ public class MoleculeExperiment : UdonSharpBehaviour
                                         gratingHitPosition.x = particlePos.x;
                                         if (hasGratingDecorator)
                                         {
-                                            gratingDecals.PlotParticle(gratingHitPosition, particles[i].startColor, 0.5f);
-                                            particleStage = killParticle(i);
+                                            gratingDecals.PlotParticle(gratingHitPosition, particles[i].startColor, false, 0.5f);
+                                            //particleStage = killParticle(i);
+                                            particleStage = 42;
+                                            particles[i].velocity = Vector3.zero;
+                                            particles[i].startLifetime = particleStage;
+                                            particles[i].remainingLifetime = 0f;
+                                            // %%%
+
                                         }
                                         else
-                                            particleStage = fadeParticle(i);
+                                        {
+                                            //particleStage = fadeParticle(i);
+                                            particleStage = 43;
+                                            particles[i].position = gratingHitPosition;
+                                            particles[i].velocity = Vector3.zero;
+                                            particles[i].startLifetime = particleStage;
+                                            particles[i].startSize = gratingMarkerSize;
+                                            particles[i].remainingLifetime = 0.6f;
+
+                                            // %%%
+                                        }
                                         nUpdated++;
                                     }
                                 }
                                 else
                                 {
-                                    particleStage = fadeParticle(i);
+                                    //particleStage = fadeParticle(i);
+                                    particles[i].velocity = Vector3.zero;
+                                    particles[i].startLifetime = 43;
+                                    particles[i].remainingLifetime = 0.5f;
+                                    particleStage = 43;
+                                    // %%%
                                     nUpdated++;
                                 }
                             }
@@ -564,25 +596,37 @@ public class MoleculeExperiment : UdonSharpBehaviour
                                 bool atTarget = hasTarget && (particleTargetDelta >= -0.01f);
                                 bool atFloor = hasFloor && (!atTarget);
                                 nUpdated++;
-                                if (atTarget)
+                                if (atTarget || atFloor)
                                 {
                                     if (hasTargetDecorator)
                                     {
-                                        targetDisplay.PlotParticle(particlePos, particles[i].startColor, 30f);
-                                        particleStage = killParticle(i);
+                                        targetDisplay.PlotParticle(particlePos, particles[i].startColor, atFloor);
+                                        //particleStage = killParticle(i);
+                                        particleStage = 42;
+                                        particles[i].velocity = Vector3.zero;
+                                        particles[i].startLifetime = particleStage;
+                                        particles[i].remainingLifetime = 0f;
+                                        // %%%
                                     }
                                     else
                                     {
-                                        particleStage = fadeParticle(i);
+                                        //particleStage = fadeParticle(i);
+                                        particleStage = 43;
+                                        particles[i].velocity = Vector3.zero;
+                                        particles[i].startLifetime = particleStage;
+                                        particles[i].remainingLifetime = 0.5f;
+                                        // %%%
                                     }
                                 }
-                                else if (atFloor)
-                                {
-                                    floorDisplay.PlotParticle(particlePos, particles[i].startColor, 30f);
-                                    particleStage = killParticle(i);
-                                }
                                 else // Anywhere else
-                                    particleStage = fadeParticle(i);
+                                {
+                                    //particleStage = fadeParticle(i);
+                                    particles[i].velocity = Vector3.zero;
+                                    particles[i].startLifetime = 43;
+                                    particles[i].remainingLifetime = 0.5f;
+                                    particleStage = 43;
+                                    // %%%
+                                }
                             }
                         } // Stopped
                         if (particleStage == 240)
@@ -650,24 +694,25 @@ public class MoleculeExperiment : UdonSharpBehaviour
             trajectoryModule.UseGravity = useGravity;
         }
     }
-    private float targetMarkerSize = 1;
-    private float gratingMarkerSize = 1;
-    private void setMarkerSizes(float value)
+    private void checkMarkerSizes()
     {
+        float trimValue = targetPointScale / 2.0f;
         float mul = particleStartSize * experimentScale / nativeGraphicsRatio;
-        targetMarkerSize = Mathf.Lerp(0.1f,1,value) * mul;
+        targetMarkerSize = Mathf.Lerp(0.1f,1,trimValue) * mul;
         if (hasTargetDecorator)
             targetDisplay.ParticleSize = targetMarkerSize;
-        if (hasFloorDecorator)
-            floorDisplay.ParticleSize = targetMarkerSize;
+        //if (hasFloorDecorator)
+        //    floorDisplay.ParticleSize = targetMarkerSize;
+        if (hasSource)
+            mainModule.startSize = particleStartSize * beamVisibility * Mathf.Sqrt(experimentScale);
     }
 
     private void dissolveDisplays()
     {
         if (hasSource)
             particleEmitter.Clear();
-        if (hasFloorDecorator)
-            floorDisplay.Dissolve();
+        //if (hasFloorDecorator)
+        //    floorDisplay.Dissolve();
         if (hasTargetDecorator)
             targetDisplay.Dissolve();
         if (hasGratingDecorator)
@@ -676,9 +721,8 @@ public class MoleculeExperiment : UdonSharpBehaviour
     }
     private void updateSettings()
     {
-        if (hasSource) 
-            mainModule.startSize = particleStartSize * beamVisibility * Mathf.Sqrt(experimentScale);
-        setMarkerSizes(targetPointScale);
+        MarkerLifetime = markerLifetime;
+        checkMarkerSizes();
         settingsChanged = false;
         avgSimulationSpeed = avgMoleculeSpeed * slowScaled;
         
@@ -858,8 +902,8 @@ public class MoleculeExperiment : UdonSharpBehaviour
 
         hasHorizontalScatter = (horizontalScatter != null);
         hasVerticalScatter = (verticalScatter != null);
-        //hasFloor = floorTransform != null;
-        hasFloorDecorator = floorDisplay != null;
+        hasFloor = floorTransform != null;
+        //hasFloorDecorator = floorDisplay != null;
         hasTarget = targetTransform != null;
         hasTargetDecorator = targetDisplay != null;
         if (hasTarget)
