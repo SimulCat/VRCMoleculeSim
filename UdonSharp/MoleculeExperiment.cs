@@ -20,6 +20,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
     public string moleculeName = "Pthalocyanine";
     [Header("Operating Settings-------")]
     [Tooltip("Default Particle Size"), SerializeField, UdonSynced, FieldChangeCallback(nameof(ParticleStartSize))] private float particleStartSize = 0.001f;
+    [SerializeField, Range(0.1f, 2f), UdonSynced, FieldChangeCallback(nameof(MarkerPlotScale))] float markerPlotScale = 2;
     [Tooltip("Decay time of particles at target"), SerializeField, Range(0.5f, 20f), UdonSynced, FieldChangeCallback(nameof(MarkerLifetime))] float markerLifetime = 15;
     [Tooltip("Exxagerate/Suppress Beam Particle Size"),SerializeField, Range(0.1f, 3f), UdonSynced, FieldChangeCallback(nameof(BeamVisibility))] float beamVisibility = 3;
     [SerializeField, ColorUsage(true, true)] Color defaultColour = Color.green;
@@ -294,20 +295,19 @@ public class MoleculeExperiment : UdonSharpBehaviour
     [SerializeField] Toggle togQuantum;
     public SyncedSlider targetScaleSlider;
 
-    [SerializeField,Range(0.1f,2f),UdonSynced,FieldChangeCallback(nameof(TargetPointScale))] float targetPointScale = 1;
-    public float TargetPointScale
+    public float MarkerPlotScale
     {
-        get => targetPointScale;
+        get => markerPlotScale;
         set
         {
             value = Mathf.Clamp(value,0.1f,2.0f);
-            if (targetPointScale != value)
+            if (markerPlotScale != value)
             {
-                targetPointScale = value;
+                markerPlotScale = value;
                 checkMarkerSizes();
             }
             if (targetScaleSlider != null)
-                targetScaleSlider.SetValues(targetPointScale, 0.1f, 2.0f);
+                targetScaleSlider.SetValues(markerPlotScale, 0.1f, 2.0f);
             RequestSerialization();
         }
     }
@@ -692,7 +692,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
     }
     private void checkMarkerSizes()
     {
-        float trimValue = targetPointScale / 2.0f;
+        float trimValue = markerPlotScale / 2.0f;
         float mul = particleStartSize * experimentScale / nativeGraphicsRatio;
         targetMarkerSize = Mathf.Lerp(0.1f,1,trimValue) * mul;
         if (hasTargetDecorator)
@@ -892,7 +892,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
             mainModule.playOnAwake = true;
         }
         if (targetScaleSlider != null)
-            targetScaleSlider.SetValues(targetPointScale, 0.1f, 3.0f);
+            targetScaleSlider.SetValues(markerPlotScale, 0.1f, 3.0f);
         if (beamScaleSlider != null)
             beamScaleSlider.SetValues(beamVisibility, 0.1f, 4f);
 
