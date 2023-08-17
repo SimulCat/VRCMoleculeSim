@@ -621,8 +621,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Material: {fileID: 2100000, guid: 6fca01922bace5e4290cf9c38f9a65b3, type: 2}
+  m_Color: {r: 0, g: 0.9875145, b: 1, a: 0.50980395}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -866,7 +866,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
+    SerializedFormat: 0
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -877,6 +877,7 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7538704389968331158}
   slider: {fileID: 7538704389946804557}
   sliderLabel: {fileID: 9008081393138504946}
+  sliderTitle: {fileID: 7850717875299662711}
   hideLabel: 0
   unitsInteger: 1
   sliderUnit: '%'

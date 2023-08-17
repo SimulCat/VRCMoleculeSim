@@ -18,6 +18,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
     [UdonSynced, FieldChangeCallback(nameof(UserSpeedPercent))] private int userSpeedPercent = 0;
 
     [SerializeField] private SyncedSlider speedSlider;
+    [SerializeField] private TMPro.TextMeshProUGUI speedTitle;
 
     private bool RandomizeSpeed
     {
@@ -266,7 +267,14 @@ public class MoleculeExperiment : UdonSharpBehaviour
             userSpeedFraction = userSpeedPercent/100f;
             userSpeedTrim = (Mathf.Clamp(userSpeedFraction / randomRange,-1f,1f)+1f)/2f;
             if (isStarting && speedSlider != null)
-                speedSlider.SetValues(userSpeedPercent,-lim,lim);
+            {
+                speedSlider.SetValues(userSpeedPercent, -lim, lim);
+                speedSlider.gameObject.SetActive(!randomizeSpeed);
+            }
+            if (speedTitle != null)
+            {
+                speedTitle.text = string.Format("Speed\n{0}m/s",Mathf.RoundToInt((1+userSpeedFraction)*avgMoleculeSpeed));
+            }
             if (isStarting)
                 RequestSerialization();
         }
@@ -894,7 +902,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
         polltime -= Time.deltaTime;
         if (polltime > 0)
             return;
-        polltime += ScaleIsChanging ? 0.1f : 0.3f;
+        polltime += ScaleIsChanging ? 0.05f : 0.3f;
         
         if (hasVerticalScatter && !vertReady)
         {
@@ -984,7 +992,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
             pointSizeSlider.SetValues(markerPointSize, 0.1f, 5f);
         if (particleSizeSlider != null)
             particleSizeSlider.SetValues(particleDisplaySize, 0.1f, 5f);
-
+        RandomizeSpeed = randomizeSpeed;
         hasHorizontalScatter = (horizontalScatter != null);
         hasVerticalScatter = (verticalScatter != null);
         hasFloor = floorTransform != null;

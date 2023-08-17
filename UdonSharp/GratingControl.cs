@@ -100,6 +100,7 @@ public class GratingControl : UdonSharpBehaviour
     
     [SerializeField, UdonSynced, FieldChangeCallback(nameof(RowPitchNative))]
     private float rowPitchNative = 0.06f;
+    //[SerializeField]
     private float graphicsRowPitch;
     public float RowPitchMetres { get { return rowPitchNative * metricScaleFactor; } }
 
@@ -505,6 +506,8 @@ public class GratingControl : UdonSharpBehaviour
     private float maxRowFrac;
     public bool checkLatticeCollision(Vector3 particlePosition)
     {
+        if (!gratingVersionIsCurrent)
+            return false;
         // First calculate
         float verticalDelta = Mathf.Abs(particlePosition.y);
         if (verticalDelta > gratingGraphicHalfSize.y)
@@ -518,6 +521,7 @@ public class GratingControl : UdonSharpBehaviour
         // now look to see if it hits a horizontal bar
         if (rowCount > 0)
         {
+            //Debug.Log("checkLatticeCollision:"+verticalDelta);
             verticalDelta /= graphicsRowPitch;
             verticalDelta -= (int)verticalDelta;
             if (!rowsOdd)
