@@ -28,7 +28,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
             randomizeSpeed = value;
             if (togRandomSpeed != null)
                 togRandomSpeed.isOn = randomizeSpeed;
-            if (speedSlider != null)
+            if (isRunning && speedSlider != null)
                 speedSlider.gameObject.SetActive(!randomizeSpeed);
             RequestSerialization();
         }
@@ -266,7 +266,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
             userSpeedPercent = value;
             userSpeedFraction = userSpeedPercent/100f;
             userSpeedTrim = (Mathf.Clamp(userSpeedFraction / randomRange,-1f,1f)+1f)/2f;
-            if (isStarting && speedSlider != null)
+            if (isRunning && speedSlider != null)
             {
                 speedSlider.SetValues(userSpeedPercent, -lim, lim);
                 speedSlider.gameObject.SetActive(!randomizeSpeed);
@@ -275,7 +275,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
             {
                 speedTitle.text = string.Format("Speed\n{0}m/s",Mathf.RoundToInt((1+userSpeedFraction)*avgMoleculeSpeed));
             }
-            if (isStarting)
+            if (isRunning)
                 RequestSerialization();
         }
     }
@@ -955,10 +955,10 @@ public class MoleculeExperiment : UdonSharpBehaviour
         }
     }
 
-    bool isStarting = false;
+    bool isRunning = false;
     void Start()
     {
-        isStarting = true;
+        isRunning = true;
         if (trajectoryModule == null)
             trajectoryModule = GetComponent<TrajectoryModule>();
         hasTrajectoryModule = trajectoryModule != null;
