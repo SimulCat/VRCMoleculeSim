@@ -18,7 +18,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
     [UdonSynced, FieldChangeCallback(nameof(UserSpeedPercent))] private int userSpeedPercent = 0;
 
     [SerializeField] private SyncedSlider speedSlider;
-    [SerializeField] private TMPro.TextMeshProUGUI speedTitle;
+    [SerializeField] private TextMeshProUGUI speedTitle;
 
     private bool RandomizeSpeed
     {
@@ -81,8 +81,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
             RequestSerialization();
         }
     }
-
-
 
     [SerializeField, ColorUsage(true, true)] Color defaultColour = Color.green;
 
@@ -271,7 +269,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
                 speedSlider.SetValues(userSpeedPercent, -lim, lim);
                 speedSlider.gameObject.SetActive(!randomizeSpeed);
             }
-            if (speedTitle != null)
+            if (hasSpeedLabel)
             {
                 speedTitle.text = string.Format("Speed\n{0}m/s",Mathf.RoundToInt((1+userSpeedFraction)*avgMoleculeSpeed));
             }
@@ -403,7 +401,14 @@ public class MoleculeExperiment : UdonSharpBehaviour
     [SerializeField] Toggle togRandomSpeed;
     [SerializeField] Toggle togMonochrome;
 
-    //[Header("Debug Values")]
+    [Header("Debug Stuff")]
+    [SerializeField] TextMeshProUGUI debugTextField;
+    [SerializeField] bool hasDebug = false;
+    private void logDebug(string message)
+    {
+        if (!hasDebug) return;
+        debugTextField.text = message;
+    }
     //[SerializeField]
     private float minDeBroglieWL = 0.1f; // h/mv
     //[SerializeField]
@@ -530,31 +535,15 @@ public class MoleculeExperiment : UdonSharpBehaviour
         useMonochrome = newMono;
     }
 
-    /* %%%%%% Local methods not supported in U#
-    int fadeParticle(int particleIndex)
-    {
-        particles[particleIndex].velocity = Vector3.zero;
-        particles[particleIndex].startLifetime = 43;
-        particles[particleIndex].remainingLifetime = 0.5f;
-        return 43;
-    }
-
-    int killParticle(int particleIndex)
-    {
-        particles[particleIndex].velocity = Vector3.zero;
-        particles[particleIndex].startLifetime = 43;
-        particles[particleIndex].remainingLifetime = 0f;
-        return 42;
-    }
-
-    // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% */
-
     private void LateUpdate()
     {
         int nUpdated = 0;
         Vector3 launchVelocity;
         Vector3 launchPosition;
-
+        Vector3 particlePos;
+        Vector3 particleVelocity;
+        float lifeRemaining;
+        int particleStage;
         if (hasSource)
         {
 
@@ -567,15 +556,20 @@ public class MoleculeExperiment : UdonSharpBehaviour
 
             for (int i = 0; i < numParticles; i++)
             {
-                int particleStage = Mathf.RoundToInt(particles[i].startLifetime);
+                var particle = particles[i];
+                particleStage = Mathf.RoundToInt(particle.startLifetime);
+                particlePos = particle.position;
+                particleVelocity = particle.velocity;
+                lifeRemaining = particle.remainingLifetime;
+                bool particleChanged = false;
                 // particleStage < 10 means newborn (unlaunched)
                 if (particleStage < 10)
                 {
-                    nUpdated++;
+                    particleChanged = true;
                     particleStage = 250;
-                    particles[i].remainingLifetime = 100;
+                    lifeRemaining = 100;
                     launchPosition = new Vector3(gratingThickness, spreadHigh, spreadWide);
-                    particles[i].axisOfRotation = launchPosition;
+                    particle.axisOfRotation = launchPosition;
                     launchPosition += sourceXfrm.position;
                     Color launchColour = defaultColour;
                     uint particleIndex = 0;
@@ -592,32 +586,27 @@ public class MoleculeExperiment : UdonSharpBehaviour
                         float speedFraction = randomizeSpeed ? UnityEngine.Random.Range(-randomRange, randomRange) : userSpeedFraction;
                         launchVelocity = new Vector3(avgSimulationSpeed * speedFraction + 1, 0, 0);
                     }
-                    particles[i].velocity = launchVelocity;
+                    particleVelocity = launchVelocity;
+                    particlePos = launchPosition;
                     launchVelocity.y = -launchVelocity.y;
-                    particles[i].rotation3D = launchVelocity;
-                    particles[i].position = launchPosition;
-                    particles[i].startColor = launchColour;
-                    particles[i].startLifetime = particleStage;
-                    particles[i].randomSeed = particleIndex;
+                    particle.rotation3D = launchVelocity;
+                    particle.startColor = launchColour;
+                    particle.randomSeed = particleIndex;
                 }
                 else // not a newborn
                 {
-                    bool particleChanged = false;
-                    Vector3 particlePos = particles[i].position;
                     bool afterTarget = particlePos.x > (targetPosition.x+0.1f) && particleStage > 50;
                     if (afterTarget) // Stray
                     {
                         //particleStage = fadeParticle(i);
-                        particles[i].velocity = Vector3.zero;
-                        particles[i].startLifetime = 43;
-                        particles[i].remainingLifetime = 0.5f;
+                        particleVelocity = Vector3.zero;
+                        lifeRemaining = 0.5f;
                         particleStage = 43;
                         // %%%
-                        nUpdated++;
+                        particleChanged = true;
                     }
                     if (particleStage > 50)
                     {
-                        Vector3 particleVelocity = particles[i].velocity;
                         float particleGratingDelta = particlePos.x - gratingPosition.x;
                         // Any Above 50 and stopped have collided with something and need to be handled
                         float particleTargetDelta = particlePos.x - targetPosition.x;
@@ -634,7 +623,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
                               // Now test to see if stopped at grating
                                 if (Mathf.Abs(particleGratingDelta) <= 0.01f)
                                 { // Here if close to grating
-                                    Vector3 gratingHitPosition = particles[i].axisOfRotation;
+                                    Vector3 gratingHitPosition = particle.axisOfRotation;
                                     if (hasGrating && (!gratingControl.checkLatticeCollision(gratingHitPosition)))
                                     {
                                         particlePos = gratingHitPosition;
@@ -650,34 +639,32 @@ public class MoleculeExperiment : UdonSharpBehaviour
                                             gratingDecals.FadeParticle(gratingHitPosition, particles[i].startColor, false, gratingMarkerSize, 0.5f);
                                             //particleStage = killParticle(i);
                                             particleStage = 42;
-                                            particles[i].velocity = Vector3.zero;
-                                            particles[i].startLifetime = particleStage;
-                                            particles[i].remainingLifetime = 0f;
+                                            particle.velocity = Vector3.zero;
+                                            lifeRemaining = 0f;
+                                            particleChanged = true;
                                             // %%%
                                         }
                                         else
                                         {
                                             //particleStage = fadeParticle(i);
                                             particleStage = 43;
-                                            particles[i].position = gratingHitPosition;
-                                            particles[i].velocity = Vector3.zero;
-                                            particles[i].startLifetime = particleStage;
-                                            particles[i].startSize = gratingMarkerSize;
-                                            particles[i].remainingLifetime = 0.6f;
+                                            particlePos = gratingHitPosition;
+                                            particleVelocity = Vector3.zero;
+                                            particle.startSize = gratingMarkerSize;
+                                            lifeRemaining = 0.6f;
+                                            particleChanged = true;
                                             // %%%
                                         }
-                                        nUpdated++;
                                     }
                                 }
                                 else
                                 {
                                     //particleStage = fadeParticle(i);
-                                    particles[i].velocity = Vector3.zero;
-                                    particles[i].startLifetime = 43;
-                                    particles[i].remainingLifetime = 0.5f;
+                                    particleVelocity = Vector3.zero;
+                                    lifeRemaining = 0.5f;
                                     particleStage = 43;
                                     // %%%
-                                    nUpdated++;
+                                    particleChanged = true;
                                 }
                             }
                             else
@@ -687,34 +674,28 @@ public class MoleculeExperiment : UdonSharpBehaviour
                                 nUpdated++;
                                 if (atTarget || atFloor)
                                 {
+                                    lifeRemaining = 0f;
                                     if (hasTargetDecorator)
                                     {
                                         targetDisplay.PlotParticle(particlePos, particles[i].startColor, atFloor);
-                                        //particleStage = killParticle(i);
                                         particleStage = 42;
-                                        particles[i].velocity = Vector3.zero;
-                                        particles[i].startLifetime = particleStage;
-                                        particles[i].remainingLifetime = 0f;
-                                        // %%%
+                                        particleVelocity = Vector3.zero;
                                     }
                                     else
                                     {
-                                        //particleStage = fadeParticle(i);
                                         particleStage = 43;
-                                        particles[i].velocity = Vector3.zero;
-                                        particles[i].startLifetime = particleStage;
-                                        particles[i].remainingLifetime = 0.5f;
-                                        // %%%
+                                        particleVelocity = Vector3.zero;
+                                        lifeRemaining = 0.5f;
                                     }
+                                    particleChanged = true;
                                 }
                                 else // Anywhere else
                                 {
                                     //particleStage = fadeParticle(i);
-                                    particles[i].velocity = Vector3.zero;
-                                    particles[i].startLifetime = 43;
-                                    particles[i].remainingLifetime = 0.5f;
+                                    particleVelocity = Vector3.zero;
+                                    lifeRemaining = 0.5f;
                                     particleStage = 43;
-                                    // %%%
+                                    particleChanged = true;
                                 }
                             }
                         } // Stopped
@@ -723,7 +704,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
                             float speedFraction = particleVelocity.x / maxSimSpeed;
                             float speedRestore = (maxSimSpeed * speedFraction);
                             Vector3 unitVecScatter = Vector3.right;
-                            particles[i].remainingLifetime = maxLifetimeAfterGrating;
+                            lifeRemaining = maxLifetimeAfterGrating;
                             particleChanged = true;
                             particleStage = 239;
                             if (useQuantumScatter)
@@ -746,17 +727,19 @@ public class MoleculeExperiment : UdonSharpBehaviour
                                 particleVelocity = updateV;
                             }
                         }
-                        if (particleChanged)
-                        {
-                            particles[i].startLifetime = particleStage;
-                            particles[i].velocity = particleVelocity;
-                            particles[i].position = particlePos;
-                            nUpdated++;
-                        }
                     }
                 }
+                if (particleChanged)
+                {
+                    particle.startLifetime = particleStage;
+                    particle.velocity = particleVelocity;
+                    particle.position = particlePos;
+                    particle.remainingLifetime = lifeRemaining;
+                    nUpdated++;
+                    particles[i] = particle;
+                }
             }
-            
+
             if (nUpdated > 0)
             {
                 particleEmitter.SetParticles(particles, numParticles);
@@ -779,9 +762,11 @@ public class MoleculeExperiment : UdonSharpBehaviour
         particleEmitter.Play();
         if (hasTrajectoryModule)
         {
+            Debug.Log("Has Trajectory Module");
             trajectoryModule.GravitySim = gravitySim;
             trajectoryModule.UseGravity = useGravity;
         }
+        logDebug(string.Format("G: Has Traj {0}, Traj Valid {1}", hasTrajectoryModule, trajectoryValid));
     }
     private void checkMarkerSizes()
     {
@@ -826,6 +811,8 @@ public class MoleculeExperiment : UdonSharpBehaviour
         }
         else
             trajectoryValid = false;
+        logDebug(string.Format("U: Has Traj {0}, Traj Valid {1}", hasTrajectoryModule, trajectoryValid));
+
         trajectoryChanged = false;
         Vector3 newPosition;
 
@@ -956,8 +943,11 @@ public class MoleculeExperiment : UdonSharpBehaviour
     }
 
     bool isRunning = false;
+    bool hasSpeedLabel = false;
     void Start()
     {
+        hasDebug = (debugTextField != null) && debugTextField.gameObject.activeSelf;
+        hasSpeedLabel = speedTitle != null;
         isRunning = true;
         if (trajectoryModule == null)
             trajectoryModule = GetComponent<TrajectoryModule>();
