@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1543923781472673039}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Fill Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -47,7 +47,7 @@ GameObject:
   - component: {fileID: 1543923781614949171}
   - component: {fileID: 5906791457494645978}
   - component: {fileID: 67808532797277403}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: ValueLabel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -109,8 +109,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278255537
-  m_fontColor: {r: 0.69532657, g: 1, b: 0, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -180,7 +180,7 @@ GameObject:
   - component: {fileID: 1543923781649221779}
   - component: {fileID: 1543923781649221777}
   - component: {fileID: 1543923781649221778}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -227,7 +227,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.69532657, g: 1, b: 0, a: 1}
+  m_Color: {r: 1, g: 0.8352941, b: 0, a: 0.8}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -252,7 +252,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1543923781687018488}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Handle Slide Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -290,7 +290,7 @@ GameObject:
   - component: {fileID: 1543923781791467760}
   - component: {fileID: 1543923781791467758}
   - component: {fileID: 1543923781791467759}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Handle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -338,7 +338,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.69532657, g: 1, b: 0, a: 1}
+  m_Color: {r: 1, g: 0.8352941, b: 0, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -369,7 +369,7 @@ GameObject:
   - component: {fileID: 1543923781849928064}
   - component: {fileID: 1543923781849928126}
   - component: {fileID: 1543923781849928127}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: SliderPointSize
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -497,11 +497,12 @@ MonoBehaviour:
   hideLabel: 0
   unitsInteger: 0
   sliderUnit: x
+  unitDisplayScale: 1
   sliderScale: 0.1
   SliderClient: {fileID: 0}
   clientVariableName: markerPointSize
   clientPointerStateVar: 
-  currentValue: 4
+  currentValue: 5
   maxValue: 1
   minValue: 0
 --- !u!114 &1543923781849928127
@@ -524,7 +525,7 @@ MonoBehaviour:
   AllowCollisionOwnershipTransfer: 0
   Reliable: 0
   _syncMethod: 3
-  serializedProgramAsset: {fileID: 11400000, guid: 72b3bfbbd77e07b4c834681681c5ff5e,
+  serializedProgramAsset: {fileID: 11400000, guid: c7d6ffb95ddd58945b7f00fe8bf5d927,
     type: 2}
   programSource: {fileID: 11400000, guid: 703b21918739038438cbdf5288de721c, type: 2}
   serializedPublicVariablesBytesString: Ai8AAAAAATIAAABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlAFQAYQBiAGwAZQAsACAAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4AAAAAAAYBAAAAAAAAACcBBAAAAHQAeQBwAGUAAWgAAABTAHkAcwB0AGUAbQAuAEMAbwBsAGwAZQBjAHQAaQBvAG4AcwAuAEcAZQBuAGUAcgBpAGMALgBMAGkAcwB0AGAAMQBbAFsAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4ALgBJAG4AdABlAHIAZgBhAGMAZQBzAC4ASQBVAGQAbwBuAFYAYQByAGkAYQBiAGwAZQAsACAAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4AXQBdACwAIABtAHMAYwBvAHIAbABpAGIAAQEJAAAAVgBhAHIAaQBhAGIAbABlAHMALwEAAAABaAAAAFMAeQBzAHQAZQBtAC4AQwBvAGwAbABlAGMAdABpAG8AbgBzAC4ARwBlAG4AZQByAGkAYwAuAEwAaQBzAHQAYAAxAFsAWwBWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAEkAbgB0AGUAcgBmAGEAYwBlAHMALgBJAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlACwAIABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgBdAF0ALAAgAG0AcwBjAG8AcgBsAGkAYgABAAAABgEAAAAAAAAAAi8CAAAAAUkAAABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlAGAAMQBbAFsAUwB5AHMAdABlAG0ALgBJAG4AdAAzADIALAAgAG0AcwBjAG8AcgBsAGkAYgBdAF0ALAAgAFYAUgBDAC4AVQBkAG8AbgAuAEMAbwBtAG0AbwBuAAIAAAAGAgAAAAAAAAAnAQQAAAB0AHkAcABlAAEXAAAAUwB5AHMAdABlAG0ALgBTAHQAcgBpAG4AZwAsACAAbQBzAGMAbwByAGwAaQBiACcBCgAAAFMAeQBtAGIAbwBsAE4AYQBtAGUAAR8AAABfAF8AXwBVAGQAbwBuAFMAaABhAHIAcABCAGUAaABhAHYAaQBvAHUAcgBWAGUAcgBzAGkAbwBuAF8AXwBfACcBBAAAAHQAeQBwAGUAARYAAABTAHkAcwB0AGUAbQAuAEkAbgB0ADMAMgAsACAAbQBzAGMAbwByAGwAaQBiABcBBQAAAFYAYQBsAHUAZQACAAAABwUHBQcF
@@ -541,7 +542,7 @@ GameObject:
   - component: {fileID: 1543923781868416585}
   - component: {fileID: 1543923781868416583}
   - component: {fileID: 1543923781868416584}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: SliderPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -588,8 +589,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: 6fca01922bace5e4290cf9c38f9a65b3, type: 2}
-  m_Color: {r: 0, g: 0.9875145, b: 1, a: 0.50980395}
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.07413401, g: 0, b: 0.54901963, a: 0.36078432}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -615,7 +616,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1543923781871458661}
   - component: {fileID: 1543923781871458660}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Slider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -690,7 +691,7 @@ MonoBehaviour:
   m_MinValue: 1
   m_MaxValue: 50
   m_WholeNumbers: 1
-  m_Value: 10
+  m_Value: 6
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -716,7 +717,7 @@ GameObject:
   - component: {fileID: 1543923782002901698}
   - component: {fileID: 1543923782002901696}
   - component: {fileID: 1543923782002901697}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -762,8 +763,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: 6fca01922bace5e4290cf9c38f9a65b3, type: 2}
-  m_Color: {r: 0.495378, g: 0.33228016, b: 0.5377358, a: 0.3764706}
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.33333334, g: 0.39718652, b: 0.5372549, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -790,7 +791,7 @@ GameObject:
   - component: {fileID: 6805178990779466040}
   - component: {fileID: 3852665284768496807}
   - component: {fileID: 1225154593202596702}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -854,8 +855,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278255537
-  m_fontColor: {r: 0.69532657, g: 1, b: 0, a: 1}
+    rgba: 4294959104
+  m_fontColor: {r: 0, g: 0.8784314, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:

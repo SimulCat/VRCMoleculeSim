@@ -400,7 +400,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
     [SerializeField] Toggle togQuantum;
     [SerializeField] Toggle togRandomSpeed;
     [SerializeField] Toggle togMonochrome;
-
+    bool iamOwner = false;
     [Header("Debug Stuff")]
     [SerializeField] TextMeshProUGUI debugTextField;
     [SerializeField] bool hasDebug = false;
@@ -462,13 +462,15 @@ public class MoleculeExperiment : UdonSharpBehaviour
 
     public override void OnOwnershipTransferred(VRCPlayerApi player)
     {
-        bool isLocal = Networking.IsOwner(this.gameObject);
+        iamOwner = Networking.IsOwner(this.gameObject);
+        /*
         if (pointSizeSlider != null)
             pointSizeSlider.IsInteractible = isLocal;
         if (speedSlider != null)
             speedSlider.IsInteractible = isLocal;
         if (particleSizeSlider != null)
-            particleSizeSlider.IsInteractible = isLocal;
+            particleSizeSlider.IsInteractible = isLocal; 
+        */
     }
     private void UpdateLabels()
     {
