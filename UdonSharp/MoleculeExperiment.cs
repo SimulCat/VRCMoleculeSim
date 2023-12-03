@@ -62,7 +62,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
         {
             Debug.Log("Beam Size Pointer" + value.ToString());
             beamSizeState = value;
-            if (!iamOwner)
+            if (!iamOwner && value)
                 Networking.SetOwner(player, gameObject);
         }
     }
@@ -96,9 +96,8 @@ public class MoleculeExperiment : UdonSharpBehaviour
         get => speedPtrState;
         set
         {
-            Debug.Log("Speed Slide Pointer" + value.ToString());
             speedPtrState = value;
-            if (!iamOwner)
+            if (!iamOwner && value)
                 Networking.SetOwner(player, gameObject);
         }
     }
@@ -116,8 +115,8 @@ public class MoleculeExperiment : UdonSharpBehaviour
                 {
                     speedIsPending = true;
                     pendingSpeed = value;
-                    return;
                 }
+                return;
             }
             if (value != speedPercent)
                 SpeedPercent = value;
@@ -133,7 +132,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
         {
             Debug.Log("Marker Slide Pointer" + value.ToString());
             markerSlideState = value;
-            if (!iamOwner)
+            if (!iamOwner && value)
                 Networking.SetOwner(player, gameObject);
         }
     }
@@ -151,8 +150,8 @@ public class MoleculeExperiment : UdonSharpBehaviour
                 {
                     pointSizeIsPending = true;
                     pendingPointSize = value;
-                    return;
                 }
+                return;
             }
             if (value != markerPointSize)
                 MarkerPointSize = value;
