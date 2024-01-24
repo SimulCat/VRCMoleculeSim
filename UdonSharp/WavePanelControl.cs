@@ -12,7 +12,6 @@ using VRC.Udon;
 public class WavePanelControl : UdonSharpBehaviour
 {
     [Tooltip("Wave Display Mesh")] public MeshRenderer thePanel;
-    [Tooltip("Mesh point simScale (nominally mm)"),Range(100,4096)] private float mmToPixels = 1024;
     private Material matSIM = null;
     private bool iHaveSimMaterial = false;
  
