@@ -55,9 +55,9 @@ public class QuantumScatter : UdonSharpBehaviour
         Color xColor = Color.clear;
         for (int i = 0; i < pointsWide; i++)
         {
-            xColor.r = gratingTransform[i];
-            xColor.g = gratingTransform[i];
-            xColor.b = reverseLookup[i];
+            xColor.r = gratingFourierSq[i];
+            xColor.g = probIntegral[i];
+            xColor.b = probabilityLookup[i];
             tex.SetPixel(i, 0, xColor);
         }
         tex.filterMode = FilterMode.Point;
@@ -90,24 +90,22 @@ public class QuantumScatter : UdonSharpBehaviour
     [Header("Number of Lookup Points")]
     [SerializeField]
     private int pointsWide = 256;
-    [SerializeField]
+    //[SerializeField]
     private bool settingsChanged = false;
-    [SerializeField]
+    //[SerializeField]
     private bool settingsLoaded = false;
     public bool SettingsLoaded { get => settingsLoaded; }
-    [SerializeField]
+    //[SerializeField]
     private bool gotSettings = false;
     //[SerializeField]
-    private float[] gratingTransform;
+    private float[] gratingFourierSq;
+   // [SerializeField]
+    private float[] probIntegral;
     //[SerializeField]
-    private float[] transformIntegral;
-    //[SerializeField] 
-    private int[] randomWidths;
-    //[SerializeField]
-    private float[] reverseLookup;
+    private float[] probabilityLookup;
     //[SerializeField]
     int distributionSegment;
-    [SerializeField]
+    //[SerializeField]
     int distributionRange;
     [SerializeField]
     private float lambdaMin = 1;
@@ -156,7 +154,6 @@ public class QuantumScatter : UdonSharpBehaviour
         return true;
     }
 
-    /// Get integer that gives a value inside the integer (digitised) from the humongous array distribution lookups that is the indexes across the 8192 point array
     float SubsetSample(int DistributionRange)
     {
         if (!settingsLoaded)
@@ -166,8 +163,8 @@ public class QuantumScatter : UdonSharpBehaviour
         int min = (-DistributionRange) + 1;
         int nRand = Random.Range(min, DistributionRange);
         if (nRand >= 0)
-            return reverseLookup[nRand];
-        return -(reverseLookup[-nRand]);
+            return probabilityLookup[nRand];
+        return -(probabilityLookup[-nRand]);
     }
 
 
@@ -175,8 +172,8 @@ public class QuantumScatter : UdonSharpBehaviour
     {
         if (!settingsLoaded)
             return 0f;
-        distributionSegment = pointsWide - 1;
-        distributionRange = randomWidths[distributionSegment];
+        distributionSegment = Mathf.RoundToInt((pointsWide - 1)*incidentSpeedFrac);
+        distributionRange = (int)Mathf.Round(probIntegral[distributionSegment]);
         float resultIndex = SubsetSample(distributionRange);
         float resultFrac = (distributionScale * resultIndex )/ (pointsWide * incidentSpeedFrac);
         return Mathf.Clamp(resultFrac,-1f,1f);
@@ -198,14 +195,14 @@ public class QuantumScatter : UdonSharpBehaviour
         pitchDivLambdaMin = slitPitch / lambdaMin;
         Debug.Log(string.Format("{0} apertuere/LambdaMin={1} pitch/LambdaMin={2}",gameObject.name,widthDivLambdaMin, pitchDivLambdaMin));
         // Assume momentum spectrum is symmetrical so calculate from zero.
-        float integralSum = 0f;
+        float probIntegralSum = 0f;
         float scaleTheta = Mathf.PI;
         float singleSlitValueSq;
         float manySlitValue;
         float sinQd;
         float dX;
         float thisValue;
-        transformIntegral[0] = 0;
+        probIntegral[0] = 0;
         float thetaMaxSingle = Mathf.Asin((7.0f * lambdaMin/slitWidth));
         if (thetaMaxSingle < Mathf.PI)
             scaleTheta = thetaMaxSingle;
@@ -233,46 +230,46 @@ public class QuantumScatter : UdonSharpBehaviour
                     manySlitValue = Mathf.Sin(numApertures * dX * pitchDivLambdaMin) / sinQd; 
                 thisValue = singleSlitValueSq * (manySlitValue * manySlitValue);
             }
-            integralSum += thisValue;
-            gratingTransform[nPoint] = thisValue;
-            transformIntegral[nPoint+1] = integralSum;
+            gratingFourierSq[nPoint] = thisValue;
+            probIntegral[nPoint] = probIntegralSum;
+            probIntegralSum += thisValue;
         }
-        // Now Convert Distribution to a Normalized Distribution 0 to pointsWide;
-        float normScale = pointsWide / integralSum;
+        probIntegral[pointsWide] = probIntegralSum;
+        // Now Normalize the Integral from 0 to pointsWide;
+        float normScale = (pointsWide-1) / probIntegral[pointsWide-1];
         for (int nPoint = 0; nPoint <= pointsWide; nPoint++)
-        {
-            transformIntegral[nPoint] *= normScale;
-            gratingTransform[nPoint] *= normScale;
-        }
+            probIntegral[nPoint] *= normScale;
 
         // Now invert the table.
         int indexAbove = 0;
         int indexBelow;
         float vmin;
-        float vmax = transformIntegral[0];
+        float vmax = 0;
         float frac;
-        for (int i = 0; i <= pointsWide; i++)
+        float val;
+        int lim = pointsWide - 1;
+        for (int i = 0; i <= lim; i++)
         {
-            randomWidths[i] = Mathf.Clamp(Mathf.RoundToInt(transformIntegral[i]),0,pointsWide);
             // Move VMax up until > than i)
-            while ((vmax <= i) && (indexAbove < pointsWide - 1))
+            while ((vmax <= i) && (indexAbove <= lim))
             {
                 indexAbove++;
-                vmax = transformIntegral[indexAbove];
+                vmax = probIntegral[indexAbove];
             }
             vmin = vmax; indexBelow = indexAbove;
             while ((indexBelow > 0) && (vmin > i))
             {
                 indexBelow--;
-                vmin = transformIntegral[indexBelow];
+                vmin = probIntegral[indexBelow];
             }
             if (indexBelow >= indexAbove)
-                reverseLookup[i] = vmax;
+                val = vmax;
             else
             {
                 frac = Mathf.InverseLerp(vmin, vmax, i);
-                reverseLookup[i] = Mathf.Lerp(indexBelow,indexAbove,frac);
+                val = Mathf.Lerp(indexBelow,indexAbove,frac);
             }
+            probabilityLookup[i] = val; // * norm;
         }
         if (simMatIsValid) 
             CreateTexture();
@@ -294,10 +291,9 @@ public class QuantumScatter : UdonSharpBehaviour
 
     private void Start()
     {
-        randomWidths = new int[pointsWide+1];
-        gratingTransform = new float[pointsWide + 1];
-        transformIntegral = new float[pointsWide+1];
-        reverseLookup = new float[pointsWide+1];
+        gratingFourierSq = new float[pointsWide];
+        probIntegral = new float[pointsWide+1];
+        probabilityLookup = new float[pointsWide];
         isStarted = true;
     }
 }
