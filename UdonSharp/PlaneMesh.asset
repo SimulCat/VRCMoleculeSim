@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: PlaneMesh
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 47062f4c80d37ca468239b9d664919db,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 3f52f0b5b50690a4a84c43b711dacd8a,
     type: 2}
   udonAssembly: 
   assemblyError: 
