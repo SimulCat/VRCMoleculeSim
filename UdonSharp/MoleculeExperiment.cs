@@ -5,19 +5,19 @@ using UnityEngine;
 using UnityEngine.UI;
 using VRC.SDKBase;
 using VRC.Udon;
+
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 public class MoleculeExperiment : UdonSharpBehaviour
 {
     [Tooltip("Particle speed at middle of range")]
     public float avgMoleculeSpeed=150;
-    [SerializeField, Range(0, 70), Tooltip("% Fraction of avg velocity +-"),UdonSynced,FieldChangeCallback(nameof(RandomRangePercent))]
+    [SerializeField, Range(0, 70), Tooltip("% Fraction of avg velocity +-"),FieldChangeCallback(nameof(RandomRangePercent))]
     private int randomRangePercent = 50;
     [SerializeField, UdonSynced,  FieldChangeCallback(nameof(RandomizeSpeed))] bool randomizeSpeed = true;
     
-    [UdonSynced, FieldChangeCallback(nameof(SpeedPercent))] private int speedPercent = 0;
+    [SerializeField,FieldChangeCallback(nameof(SpeedPercent))] private float speedPercent = 0;
 
-    [SerializeField] private SyncedSlider speedSlider;
-    [SerializeField] private TextMeshProUGUI speedTitle;
+    [SerializeField] private UdonSlider speedSlider;
 
     private bool RandomizeSpeed
     {
@@ -38,10 +38,14 @@ public class MoleculeExperiment : UdonSharpBehaviour
 
     public float molecularWeight = 514.5389f;
     public string moleculeName = "Pthalocyanine";
+    [SerializeField] private TextMeshProUGUI moleculeText;
+
     [Header("Operating Settings-------")]
-    [Tooltip("Default Particle Size"), SerializeField, UdonSynced, FieldChangeCallback(nameof(ParticleStartSize))] private float particleStartSize = 0.001f;
-    [SerializeField, Range(0.1f, 5f), UdonSynced, FieldChangeCallback(nameof(MarkerPointSize))] float markerPointSize = 2;
-    [SerializeField] private SyncedSlider pointSizeSlider;
+    [SerializeField, Tooltip("Default Particle Size"), FieldChangeCallback(nameof(ParticleStartSize))] 
+    private float particleStartSize = 0.001f;
+    [SerializeField, Range(0.1f, 5f), FieldChangeCallback(nameof(MarkerPointSize))] 
+    private float markerPointSize = 2;
+    [SerializeField] private UdonSlider markerSizeSlider;
 
     private float pendingBeamSize = 0;
     private bool beamSizeIsPending = false;
@@ -52,110 +56,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
     private VRCPlayerApi player;
     private bool iamOwner = false;
 
-
-    [SerializeField, FieldChangeCallback(nameof(BeamSizeState))]
-    public bool beamSizeState = false;
-    private bool BeamSizeState
-    {
-        get => beamSizeState;
-        set
-        {
-            //Debug.Log("Beam Size Pointer" + value.ToString());
-            beamSizeState = value;
-            if (!iamOwner && value)
-                Networking.SetOwner(player, gameObject);
-        }
-    }
-
-    [SerializeField, FieldChangeCallback(nameof(BeamSizeValue))]
-    public float beamSizeValue;
-    private float BeamSizeValue
-    {
-        get => beamSizeValue;
-        set
-        {
-            if (!iamOwner)
-            {
-                if (beamSizeState)
-                {
-                    beamSizeIsPending = true;
-                    pendingBeamSize = value;
-                    return;
-                }
-            }
-            if (value != particleDisplaySize)
-                ParticleDisplaySize = value;
-        }
-    }
-
-
-    [SerializeField, FieldChangeCallback(nameof(SpeedPtrState))]
-    public bool speedPtrState = false;
-    private bool SpeedPtrState
-    {
-        get => speedPtrState;
-        set
-        {
-            speedPtrState = value;
-            if (!iamOwner && value)
-                Networking.SetOwner(player, gameObject);
-        }
-    }
-
-    [SerializeField, FieldChangeCallback(nameof(SpeedValue))]
-    public int speedValue;
-    private int SpeedValue
-    {
-        get => speedValue;
-        set
-        {
-            if (!iamOwner)
-            {
-                if (speedPtrState)
-                {
-                    speedIsPending = true;
-                    pendingSpeed = value;
-                }
-                return;
-            }
-            if (value != speedPercent)
-                SpeedPercent = value;
-        }
-    }
-
-    [SerializeField, FieldChangeCallback(nameof(MarkerSlideState))]
-    public bool markerSlideState = false;
-    private bool MarkerSlideState
-    {
-        get => markerSlideState;
-        set
-        {
-            markerSlideState = value;
-            if (!iamOwner && value)
-                Networking.SetOwner(player, gameObject);
-        }
-    }
-
-    [SerializeField, FieldChangeCallback(nameof(MarkerSlideValue))]
-    public float markerSlideValue;
-    private float MarkerSlideValue
-    {
-        get => markerSlideValue;
-        set
-        {
-            if (!iamOwner)
-            {
-                if (markerSlideState)
-                {
-                    pointSizeIsPending = true;
-                    pendingPointSize = value;
-                }
-                return;
-            }
-            if (value != markerPointSize)
-                MarkerPointSize = value;
-        }
-    }
     public float MarkerPointSize
     {
         get => markerPointSize;
@@ -167,30 +67,21 @@ public class MoleculeExperiment : UdonSharpBehaviour
                 markerPointSize = value;
                 checkMarkerSizes();
             }
-            if (pointSizeSlider != null)
-                pointSizeSlider.SetValues(markerPointSize, 0.1f, 5.0f);
-            RequestSerialization();
         }
     }
 
-    [Tooltip("Decay time of particles at target"), SerializeField, Range(0.5f, 20f), UdonSynced, FieldChangeCallback(nameof(MarkerLifetime))] float markerLifetime = 15;
-    [Tooltip("Exaggerate/Suppress Beam Particle Size"),SerializeField, Range(0.1f, 5f), UdonSynced, FieldChangeCallback(nameof(ParticleDisplaySize))] float particleDisplaySize = 3;
-    public SyncedSlider particleSizeSlider;
+    [Tooltip("Decay time of particles at target"), SerializeField, Range(0.5f, 20f), FieldChangeCallback(nameof(MarkerLifetime))] float markerLifetime = 15;
+    [Tooltip("Exaggerate/Suppress Beam Particle Size"),SerializeField, Range(0.1f, 5f), FieldChangeCallback(nameof(ParticleSize))] float particleSize = 1;
+    public UdonSlider particleSizeSlider;
 
-    private float ParticleDisplaySize
+    private float ParticleSize
     {
-        get => particleDisplaySize;
+        get => particleSize;
         set
         {
             value = Mathf.Clamp(value, 0.1f, 5.0f);
-            if (particleDisplaySize != value)
-            {
-                particleDisplaySize = value;
-                checkMarkerSizes();
-            }
-            if (particleSizeSlider != null)
-                particleSizeSlider.SetValues(particleDisplaySize, 0.1f, 5.0f);
-            RequestSerialization();
+            particleSize = value;
+            checkMarkerSizes();
         }
     }
 
@@ -277,7 +168,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
 
     //[SerializeField]
     private float slowScaled = 0.025f;
-    [SerializeField,UdonSynced,FieldChangeCallback(nameof(ScaleIsChanging))] 
+    [SerializeField,FieldChangeCallback(nameof(ScaleIsChanging))] 
     private bool scaleIsChanging = true;
     private bool ScaleIsChanging
     {
@@ -295,10 +186,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
                     particleEmitter.Clear();
                     if (hasTargetDecorator)
                         targetDisplay.Clear();
-                    //if (hasFloorDecorator)
-                    //    floorDisplay.Clear();
-                    //if (hasGratingDecorator)
-                    //    gratingDecals.Clear();
                 }
                 else
                 {
@@ -312,9 +199,10 @@ public class MoleculeExperiment : UdonSharpBehaviour
             }
         }
     }
+
     [SerializeField]
     private float graphicsScale = 1f;
-    [Tooltip("Scale of objects at design (10x)"),SerializeField,UdonSynced,FieldChangeCallback(nameof(NativeGraphicsRatio))]
+    [Tooltip("Scale of objects at design (10x)"),SerializeField,FieldChangeCallback(nameof(NativeGraphicsRatio))]
     private int nativeGraphicsRatio = 10;
     public int NativeGraphicsRatio 
     { 
@@ -330,7 +218,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
         }
     }
 
-    [Tooltip("Spatial Scaling"), UdonSynced, FieldChangeCallback(nameof(ExperimentScale))]
+    [Tooltip("Spatial Scaling"), FieldChangeCallback(nameof(ExperimentScale))]
     public float experimentScale = 10f; 
     public float ExperimentScale
     {
@@ -366,7 +254,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
     [SerializeField]
     private float randomRange = 0.7f;
 
-    private int SpeedPercent
+    private float SpeedPercent
     {
         get => speedPercent;
         set
@@ -376,16 +264,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
             userSpeedFraction = speedPercent/100f;
             userSpeedTrim = (Mathf.Clamp(userSpeedFraction / randomRange,-1f,1f)+1f)/2f;
             if (isRunning && speedSlider != null)
-            {
-                speedSlider.SetValues(speedPercent, -lim, lim);
-                speedSlider.gameObject.SetActive(!randomizeSpeed);
-            }
-            if (hasSpeedLabel)
-            {
-                speedTitle.text = string.Format("Speed\n{0}m/s",Mathf.RoundToInt((1+userSpeedFraction)*avgMoleculeSpeed));
-            }
-            if (isRunning)
-                RequestSerialization();
+                speedSlider.TitleText = string.Format("Speed\n{0}m/s", Mathf.RoundToInt((1 + userSpeedFraction) * avgMoleculeSpeed));
         }
     }
 
@@ -446,7 +325,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
             markerLifetime = value;
             if (hasTargetDecorator)
                 targetDisplay.MarkerLifetime = markerLifetime;
-            RequestSerialization();
         }
     }
     public float ParticleStartSize
@@ -454,12 +332,8 @@ public class MoleculeExperiment : UdonSharpBehaviour
         get => particleStartSize;
         set
         {
-            if (value != particleStartSize)
-            {
-                particleStartSize = value;
-                checkMarkerSizes();
-            }
-            RequestSerialization();
+            particleStartSize = value;
+            checkMarkerSizes();
         }
     }
 
@@ -513,15 +387,17 @@ public class MoleculeExperiment : UdonSharpBehaviour
     [SerializeField] Toggle togMonochrome;
     [SerializeField] Toggle togPlay;
     [SerializeField] Toggle togPause;
-    [SerializeField,UdonSynced,] bool playParticles = true;
+    [SerializeField,UdonSynced,FieldChangeCallback(nameof(PlayParticles))] bool playParticles = true;
     public bool PlayParticles 
     {  
         get => playParticles;  
         set 
         {  
             playParticles = value;
-            if (togPlay != null && togPlay.isOn != value)
-                togPlay.isOn = value;
+            if (togPlay != null && value && !togPlay.isOn)
+                togPlay.isOn = true;
+            if (togPause != null && !value && !togPause.isOn)
+                togPause.isOn = true;
             if (hasSource)
             {
                 if (value)
@@ -612,7 +488,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
             }
             if (beamSizeIsPending)
             {
-                ParticleDisplaySize = pendingBeamSize;
+                ParticleSize = pendingBeamSize;
                 beamSizeIsPending = false;
             }
         }
@@ -692,7 +568,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
             particleEmitter.Clear(); // Restart.
     }
 
-    public void btnReset()
+    public void doReset()
     {
         SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, nameof(resetSim));
     }
@@ -977,7 +853,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
         //if (hasFloorDecorator)
         //    floorDisplay.ParticleSize = targetMarkerSize;
         if (hasSource)
-            mainModule.startSize = particleStartSize * particleDisplaySize * Mathf.Sqrt(experimentScale);
+            mainModule.startSize = particleStartSize * particleSize * Mathf.Sqrt(experimentScale);
     }
 
     private void dissolveDisplays()
@@ -1003,6 +879,10 @@ public class MoleculeExperiment : UdonSharpBehaviour
         minSimSpeed = avgSimulationSpeed * (1 - randomRange);
         maxLifetimeAfterGrating = 1.25f * gratingToTargetSim / minSimSpeed;
         minDeBroglieWL = (h * PlanckScale) / (AMU_ToKg * molecularWeight * avgMoleculeSpeed*(1+randomRange));
+        if (moleculeText != null)
+        {
+            moleculeText.text = string.Format("Particles:<b>\n<indent=15%>{0}</b></indent>\nMolecular Weight:\n<b><indent=15%>{1:#.##}</b></indent>", moleculeName, molecularWeight);
+        }
         if (hasTrajectoryModule)
         {
             trajectoryModule.loadSettings(maxSimSpeed, minSimSpeed, gravitySim, useGravity, emitToGratingSim);
@@ -1010,7 +890,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
         }
         else
             trajectoryValid = false;
-        logDebug(string.Format("U: Has Traj {0}, Traj Valid {1}", hasTrajectoryModule, trajectoryValid));
+        //logDebug(string.Format("U: Has Traj {0}, Traj Valid {1}", hasTrajectoryModule, trajectoryValid));
 
         trajectoryChanged = false;
         Vector3 newPosition;
@@ -1141,14 +1021,12 @@ public class MoleculeExperiment : UdonSharpBehaviour
     }
 
     bool isRunning = false;
-    bool hasSpeedLabel = false;
-    void Start()
+   void Start()
     {
         player = Networking.LocalPlayer;
         ReviewOwnerShip();
 
         hasDebug = (debugTextField != null) && debugTextField.gameObject.activeSelf;
-        hasSpeedLabel = speedTitle != null;
         isRunning = true;
         if (trajectoryModule == null)
             trajectoryModule = GetComponent<TrajectoryModule>();
@@ -1164,6 +1042,11 @@ public class MoleculeExperiment : UdonSharpBehaviour
             //gratingPosition.x -= 0.001f;
         }
         SpeedPercent = speedPercent;
+        if (speedSlider != null)
+        {
+            speedSlider.SetLimits(-50, 50);
+            speedSlider.SetValue(speedPercent);
+        }
         RandomRangePercent = randomRangePercent;
         float tmp = experimentScale;
         experimentScale = 0;
@@ -1174,15 +1057,23 @@ public class MoleculeExperiment : UdonSharpBehaviour
         if (hasSource)
         {
             sourceXfrm = particleEmitter.transform;
-            //sourceXfrm.Rotate(new Vector3(0, 90, 0));
             mainModule = particleEmitter.main;
             mainModule.startSpeed = 0.1f;
             mainModule.playOnAwake = true;
         }
-        if (pointSizeSlider != null)
-            pointSizeSlider.SetValues(markerPointSize, 0.1f, 5f);
+
+        MarkerPointSize = markerPointSize;
+        if (markerSizeSlider != null)
+        {
+            markerSizeSlider.SetLimits(0.1f, 5f);
+            markerSizeSlider.SetValue(markerPointSize);
+        }
+        ParticleSize = particleSize;
         if (particleSizeSlider != null)
-            particleSizeSlider.SetValues(particleDisplaySize, 0.1f, 5f);
+        {
+            particleSizeSlider.SetLimits(0.1f, 5f);
+            particleSizeSlider.SetValue(particleSize);
+        }
         RandomizeSpeed = randomizeSpeed;
         hasHorizontalScatter = (horizontalScatter != null);
         hasVerticalScatter = (verticalScatter != null);
