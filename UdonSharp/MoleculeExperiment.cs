@@ -47,12 +47,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
     private float markerPointSize = 2;
     [SerializeField] private UdonSlider markerSizeSlider;
 
-    private float pendingBeamSize = 0;
-    private bool beamSizeIsPending = false;
-    private int pendingSpeed = 0;
-    private bool speedIsPending = false;
-    private float pendingPointSize = 0f;
-    private bool pointSizeIsPending = false;
     private VRCPlayerApi player;
     private bool iamOwner = false;
 
@@ -473,25 +467,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
     private void ReviewOwnerShip()
     {
         iamOwner = Networking.IsOwner(this.gameObject);
-
-        if (iamOwner)
-        {
-            if (pointSizeIsPending)
-            {
-                MarkerPointSize = pendingPointSize;
-                pointSizeIsPending = false;
-            }
-            if (speedIsPending)
-            {
-                SpeedPercent = pendingSpeed;
-                speedIsPending = false;
-            }
-            if (beamSizeIsPending)
-            {
-                ParticleSize = pendingBeamSize;
-                beamSizeIsPending = false;
-            }
-        }
     }
     public override void OnOwnershipTransferred(VRCPlayerApi player)
     {
@@ -916,9 +891,9 @@ public class MoleculeExperiment : UdonSharpBehaviour
     //[SerializeField]
     private int gratingVersion = -1;
     private Vector2Int apertureCounts = Vector2Int.zero;
-    //[SerializeField]
+    [SerializeField]
     private Vector2 aperturePitches = Vector2.zero;
-    //[SerializeField] 
+    [SerializeField] 
     private Vector2 apertureSize = Vector2.zero;
     // Grating Dimensions in World Space
     //[SerializeField] 
@@ -934,21 +909,21 @@ public class MoleculeExperiment : UdonSharpBehaviour
             if (!hasGrating)
                 return;
             planckChanged = false;
-            gratingSize = gratingControl.GratingGraphicsSize;
+            gratingSize = gratingControl.ActiveGratingSize;
             gratingThickness = gratingControl.panelThickness*1.5f;
             startDimensions = gratingSize/1.8f;
             int rowCount = gratingControl.RowCount;
             int colCount = gratingControl.ColumnCount;
-            float holeWidth = gratingControl.ApertureWidthMetres;
-            float holeHeight = gratingControl.ApertureHeightMetres;
-            float colPitch = gratingControl.ColumnPitchMetres;
+            float holeWidth = gratingControl.SlitWidthMetres;
+            float holeHeight = gratingControl.SlitHeightMetres;
+            float colPitch = gratingControl.SlitPitchMetres;
             float rowPitch = gratingControl.RowPitchMetres;
             bool horizChanged = force || ((colCount != apertureCounts.x) || (holeWidth != apertureSize.x) || (colPitch != aperturePitches.x));
             bool vertChanged = force || ((rowCount != apertureCounts.y) || (holeHeight != apertureSize.y) || (rowPitch != aperturePitches.y));
             apertureCounts.x = colCount; apertureCounts.y = rowCount;
             apertureSize.x = holeWidth; apertureSize.y = holeHeight; 
             aperturePitches.x = colPitch; aperturePitches.y = rowPitch;
-            gratingMarkerSize = experimentScale * Mathf.Min(gratingControl.ApertureHeightMetres, gratingControl.ApertureWidthMetres);
+            gratingMarkerSize = experimentScale * Mathf.Min(gratingControl.SlitHeightMetres, gratingControl.SlitWidthMetres);
             //if (hasGratingDecorator)
             //    gratingDecals.ParticleSize = gratingMarkerSize;
 
