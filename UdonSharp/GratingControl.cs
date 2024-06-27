@@ -17,6 +17,7 @@ public class GratingControl : UdonSharpBehaviour
     public GameObject barPrefab;
     [SerializeField]
     UdonBehaviour gratingDisplay;
+    [SerializeField] string displayZoomVar = "gratingZoomIndex";
     //public GameObject frameSupport;
 
     public float panelThickness;
@@ -105,7 +106,7 @@ public class GratingControl : UdonSharpBehaviour
 
             }
             if (gratingDisplay != null)
-                gratingDisplay.SetProgramVariable<int>("gratingZoomIndex", gratingScaleStep);
+                gratingDisplay.SetProgramVariable<int>(displayZoomVar, gratingScaleStep);
             ScaleDownFactor = scaleSteps[gratingScaleStep];
         }
     }
