@@ -3627,6 +3627,12 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1255707176603749094, guid: 93992f37bdb49ce4aaf72b68b57e5905,
         type: 3}
+    - target: {fileID: 3554019560282396811, guid: 93992f37bdb49ce4aaf72b68b57e5905,
+        type: 3}
+      propertyPath: serializedProgramAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 2c5689d2b713d6f4c92dc2c2e9da4f2a,
+        type: 2}
     - target: {fileID: 7296222211129255015, guid: 93992f37bdb49ce4aaf72b68b57e5905,
         type: 3}
       propertyPath: m_fontAsset

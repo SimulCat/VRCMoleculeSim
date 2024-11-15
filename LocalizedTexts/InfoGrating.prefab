@@ -214,6 +214,7 @@ MonoBehaviour:
 
 
 '
+  languageIndex: 0
 --- !u!114 &2193992150577193848
 MonoBehaviour:
   m_ObjectHideFlags: 0
