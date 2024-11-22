@@ -10,7 +10,6 @@ using VRC.Udon;
 
 public class GratingControl : UdonSharpBehaviour
 {
-    [SerializeField]
     Transform gratingXfrm;
     [SerializeField]
     Transform frameSupport;
@@ -655,8 +654,7 @@ public class GratingControl : UdonSharpBehaviour
     void Start()
     {
         iHaveFrame = frameSupport != null;
-        if (gratingXfrm == null)
-            gratingXfrm = transform;
+        gratingXfrm = transform;
         player = Networking.LocalPlayer;
         iHaveWidthSlider = gratingWidthSlider != null;
         iHaveSlitWidthCtl = slitWidthSlider != null;

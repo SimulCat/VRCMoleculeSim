@@ -330,7 +330,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
     QuantumScatter verticalScatter;
     [SerializeField]
     GratingControl gratingControl;
-    Transform gratingXfrm;
     float gratingThickness = 0.001f;
     [SerializeField]
     Transform targetTransform;
@@ -341,10 +340,9 @@ public class MoleculeExperiment : UdonSharpBehaviour
     [SerializeField]
     TargetDisplay gratingDecals;
     //[SerializeField]
-    Vector3 gratingPosition = Vector3.zero;
+    Vector3 gratingWorldPosition = Vector3.zero;
     //[SerializeField]
-    Vector3 targetPosition = Vector3.zero;
-    Vector3 targetRotation = Vector3.zero;
+    Vector3 targetWorldPosition = Vector3.zero;
     //[SerializeField]
     bool hasFloor;
     //[SerializeField]
@@ -586,7 +584,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
             return;
         int nUpdated = 0;
         Vector3 launchVelocity;
-        Vector3 launchPosition;
+        Vector3 launchPosOffset;
         Vector3 particlePos;
         Vector3 particleVelocity;
         float lifeRemaining;
@@ -612,9 +610,9 @@ public class MoleculeExperiment : UdonSharpBehaviour
                 particleChanged = true;
                 particleStage = 250;
                 lifeRemaining = 100;
-                launchPosition = new Vector3(gratingThickness, spreadHigh, spreadWide);
-                particle.axisOfRotation = launchPosition;
-                launchPosition += sourceXfrm.position;
+                launchPosOffset = new Vector3(gratingThickness, spreadHigh, spreadWide);
+                particle.axisOfRotation = launchPosOffset;
+                launchPosOffset += sourceXfrm.position;
                 Color launchColour = defaultColour;
                 uint particleIndex = 0;
                 if (trajectoryValid)
@@ -631,7 +629,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
                     launchVelocity = new Vector3(avgSimulationSpeed * speedFraction + 1, 0, 0);
                 }
                 particleVelocity = launchVelocity;
-                particlePos = launchPosition;
+                particlePos = launchPosOffset;
                 launchVelocity.y = -launchVelocity.y;
                 particle.rotation3D = launchVelocity;
                 particle.startColor = launchColour;
@@ -639,7 +637,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
             }
             else // not a newborn
             {
-                bool afterTarget = particlePos.x > (targetPosition.x+0.1f) && particleStage > 50;
+                bool afterTarget = particlePos.x > (targetWorldPosition.x+0.1f) && particleStage > 50;
                 if (afterTarget) // Stray
                 {
                     //particleStage = fadeParticle(i);
@@ -651,9 +649,9 @@ public class MoleculeExperiment : UdonSharpBehaviour
                 }
                 if (particleStage > 50)
                 {
-                    float particleGratingDelta = particlePos.x - gratingPosition.x;
+                    float particleGratingDelta = particlePos.x - gratingWorldPosition.x;
                     // Any Above 50 and stopped have collided with something and need to be handled
-                    float particleTargetDelta = particlePos.x - targetPosition.x;
+                    float particleTargetDelta = particlePos.x - targetWorldPosition.x;
                     bool preGratingFilter = particleStage > 240;
                     bool stopped = (particleVelocity.x < 0.01f);
                     // Handle Stopped Particle
@@ -667,47 +665,43 @@ public class MoleculeExperiment : UdonSharpBehaviour
                             // Now test to see if stopped at grating
                             if (Mathf.Abs(particleGratingDelta) <= 0.01f)
                             { // Here if close to grating
-                                Vector3 gratingHitPosition = particle.axisOfRotation;
-                                if (hasGrating && (!gratingControl.checkLatticeCollision(gratingHitPosition)))
+                                Vector3 gratingHitOffset = particle.axisOfRotation;
+                                if (hasGrating && (!gratingControl.checkLatticeCollision(gratingHitOffset)))
                                 {
-                                    particlePos = gratingHitPosition;
+                                    // Allow to pass through grating at current offset and projected collide velocity
+                                    particlePos = gratingHitOffset + gratingWorldPosition;
                                     particleVelocity = collideVelocity;
                                     particleStage = 240;
                                     particleChanged = true;
                                 }
                                 else
                                 {
-                                    gratingHitPosition.x = particlePos.x;
+                                    gratingHitOffset.x = particlePos.x;
+                                    gratingHitOffset.y += gratingWorldPosition.y;
                                     if (hasGratingDecorator)
                                     {
-                                        gratingDecals.FadeParticle(gratingHitPosition, particles[i].startColor, false, gratingMarkerSize, 0.5f);
-                                        //particleStage = killParticle(i);
+                                        gratingDecals.FadeParticle(gratingHitOffset, particles[i].startColor, false, gratingMarkerSize, 0.5f);
                                         particleStage = 42;
                                         particle.velocity = Vector3.zero;
                                         lifeRemaining = 0f;
                                         particleChanged = true;
-                                        // %%%
                                     }
                                     else
                                     {
-                                        //particleStage = fadeParticle(i);
                                         particleStage = 43;
-                                        particlePos = gratingHitPosition;
+                                        particlePos = gratingHitOffset;
                                         particleVelocity = Vector3.zero;
                                         particle.startSize = gratingMarkerSize;
                                         lifeRemaining = 0.6f;
                                         particleChanged = true;
-                                        // %%%
                                     }
                                 }
                             }
                             else
                             {
-                                //particleStage = fadeParticle(i);
                                 particleVelocity = Vector3.zero;
                                 lifeRemaining = 0.5f;
                                 particleStage = 43;
-                                // %%%
                                 particleChanged = true;
                             }
                         }
@@ -843,6 +837,23 @@ public class MoleculeExperiment : UdonSharpBehaviour
         if (collimatorProp != null)
             collimatorProp.localRotation = Quaternion.Euler(0, 0, elevationDegrees);
     }
+
+    private void setComponentPositions()
+    {
+        // Set position of grating
+        gratingWorldPosition = transform.position;
+        if (sourceXfrm != null)
+        {
+            sourceXfrm.position = gratingWorldPosition + Vector3.left * emitToGratingSim;
+            if (collimatorProp != null)
+                collimatorProp.localScale = new Vector3(graphicsScale, graphicsScale, graphicsScale);
+        }
+        if (targetTransform != null)
+        {
+            targetWorldPosition = gratingWorldPosition + Vector3.right * gratingToTargetSim;
+            targetTransform.position = targetWorldPosition;
+        }
+    }
     private void updateSettings()
     {
         MarkerLifetime = markerLifetime;
@@ -869,22 +880,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
         //logDebug(string.Format("U: Has Traj {0}, Traj Valid {1}", hasTrajectoryModule, trajectoryValid));
 
         trajectoryChanged = false;
-        Vector3 newPosition;
-
-        // Set position of grating
-        if (hasSource)
-        {
-            newPosition = gratingPosition;
-            newPosition.x -= emitToGratingSim;
-            sourceXfrm.position = newPosition;
-            if (collimatorProp != null)
-                collimatorProp.localScale = new Vector3(graphicsScale, graphicsScale, graphicsScale);
-        }
-        if (hasTarget)
-        {
-            targetPosition = new Vector3(gratingToTargetSim,0f,0f);
-            targetTransform.position = targetPosition;
-        }
+        setComponentPositions();
     }
     //[SerializeField]
     private int gratingVersion = -1;
@@ -1010,8 +1006,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
         if (gratingControl != null)
         {
             hasGrating = true;
-            gratingXfrm = gratingControl.transform;
-            gratingPosition = gratingXfrm.position;
+            gratingWorldPosition = transform.position;
             //gratingPosition.x -= 0.001f;
         }
         SpeedPercent = speedPercent;
@@ -1054,10 +1049,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
         //hasFloorDecorator = floorDisplay != null;
         hasTarget = targetTransform != null;
         hasTargetDecorator = targetDisplay != null;
-        if (hasTarget)
-        {
-            targetPosition = targetTransform.position;
-        }
+        setComponentPositions();
         // Forces initialise checkboxes if present.
         UseGravity = useGravity;
         UseQuantumScatter = useQuantumScatter;
