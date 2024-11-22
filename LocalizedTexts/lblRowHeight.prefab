@@ -67,7 +67,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Row Height
+  m_text: 'Row
+
+    Height'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ddbcc27b0346e4644a45316aaf00c441, type: 2}
   m_sharedMaterial: {fileID: 4410821715232426517, guid: ddbcc27b0346e4644a45316aaf00c441,
@@ -162,10 +164,11 @@ MonoBehaviour:
   myText: {fileID: 619696591039122658}
   languageIndex: 0
   texts:
-  - Row Height
-  - "\u884C\u306E\u9AD8\u3055"
-  - "\u884C\u9AD8"
-  - "\u884C\u9AD8"
+  - Row<br>Height
+  - "\u958B\u53E3\u90E8<br>\u9AD8\u3055"
+  - "\u5B54\u5F91\u9AD8\u5EA6"
+  - "\u5149\u5708\u9AD8\u5EA6"
+  - "\uC870\uB9AC\uAC1C<br>\uB192\uC774"
 --- !u!114 &6794718481690931243
 MonoBehaviour:
   m_ObjectHideFlags: 0

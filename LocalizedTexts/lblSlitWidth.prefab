@@ -162,9 +162,10 @@ MonoBehaviour:
   languageIndex: 0
   texts:
   - Slit Width
-  - "\u5217\u5E45"
-  - "\u5217\u5BEC"
-  - "\u5217\u5BBD"
+  - "\u7D5E\u308A\u5E45"
+  - "\u5B54\u5F91\u5BEC\u5EA6"
+  - "\u5149\u5708\u5BBD\u5EA6"
+  - "\uC870\uB9AC\uAC1C \uD3ED"
 --- !u!114 &3554019560282396811
 MonoBehaviour:
   m_ObjectHideFlags: 0

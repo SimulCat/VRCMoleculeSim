@@ -67,7 +67,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Grating Dimensions
+  m_text: Grating Scale<br>& Dimensions
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ddbcc27b0346e4644a45316aaf00c441, type: 2}
   m_sharedMaterial: {fileID: 4410821715232426517, guid: ddbcc27b0346e4644a45316aaf00c441,
@@ -95,8 +95,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 22
+  m_fontSizeBase: 22
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -159,13 +159,14 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 542168923188445577}
-  myText: {fileID: 0}
+  myText: {fileID: 1112691669920750952}
   languageIndex: 0
   texts:
-  - Grating Dimensions
+  - Grating Scale<br>& Dimensions
   - "\u683C\u5B50\u5BF8\u6CD5\u3068\u30B9\u30B1\u30FC\u30EB"
   - "\u5149\u67F5\u5C3A\u5BF8\u548C\u6BD4\u4F8B"
-  - "\u5149\u6805\u5C3A\u5BF8\u548C\u6BD4\u4F8B"
+  - "\u5149\u6805\u5C3A\u5BF8\u548C\u523B\u5EA6"
+  - "\uACA9\uC790 \uCE58\uC218 \uBC0F \uADDC\uBAA8"
 --- !u!114 &542168923188445577
 MonoBehaviour:
   m_ObjectHideFlags: 0

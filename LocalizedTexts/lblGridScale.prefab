@@ -37,7 +37,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 114.7}
-  m_SizeDelta: {x: 160, y: 20}
+  m_SizeDelta: {x: 185, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8963241009353265954
 CanvasRenderer:
@@ -67,7 +67,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Grating Scale
+  m_text: Grating Scale Ratio
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -161,10 +161,11 @@ MonoBehaviour:
   myText: {fileID: 6724506117668799990}
   languageIndex: 0
   texts:
-  - Grating Scale
-  - "\u30B9\u30B1\u30FC\u30EB"
-  - "\u7DB2\u683C\u6BD4\u4F8B"
-  - "\u7F51\u683C\u6BD4\u4F8B"
+  - Grating Scale Ratio
+  - "\u683C\u5B50\u30B5\u30A4\u30BA\u6BD4"
+  - "\u5149\u67F5\u5C3A\u5BF8\u6BD4"
+  - "\u5149\u6805\u5C3A\u5BF8\u6BD4"
+  - "\uACA9\uC790 \uD06C\uAE30 \uBE44\uC728"
 --- !u!114 &7843602706301217252
 MonoBehaviour:
   m_ObjectHideFlags: 0

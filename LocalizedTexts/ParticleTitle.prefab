@@ -67,7 +67,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Particles
+  m_text: Particle Beam Settings
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ddbcc27b0346e4644a45316aaf00c441, type: 2}
   m_sharedMaterial: {fileID: 4410821715232426517, guid: ddbcc27b0346e4644a45316aaf00c441,
@@ -77,8 +77,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 3806199552
-  m_fontColor: {r: 0, g: 1, b: 0.8666667, a: 0.8862745}
+    rgba: 4294959104
+  m_fontColor: {r: 0, g: 0.8784314, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -95,8 +95,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 26
-  m_fontSizeBase: 26
+  m_fontSize: 24
+  m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -162,10 +162,11 @@ MonoBehaviour:
   myText: {fileID: 1483039152062819212}
   languageIndex: 0
   texts:
-  - Particle Beam
-  - "\u7C92\u5B50\u30D3\u30FC\u30E0"
-  - "\u7C92\u5B50\u675F"
-  - "\u7C92\u5B50\u675F"
+  - Particle Beam Settings
+  - "\u7C92\u5B50\u30D3\u30FC\u30E0\u8A2D\u5B9A"
+  - "\u7C92\u5B50\u675F\u8A2D\u5B9A"
+  - "\u7C92\u5B50\u675F\u8BBE\u7F6E"
+  - "\uD30C\uD2F0\uD074 \uBE54 \uC124\uC815"
 --- !u!114 &2865174433006474376
 MonoBehaviour:
   m_ObjectHideFlags: 0

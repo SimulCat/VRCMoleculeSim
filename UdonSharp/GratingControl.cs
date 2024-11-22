@@ -16,10 +16,10 @@ public class GratingControl : UdonSharpBehaviour
     public GameObject barPrefab;
     [SerializeField] private UdonBehaviour gratingDisplay;
     [SerializeField] private CameraZoom gratingCamera;
-    [SerializeField] string displayZoomVar = "gratingZoomIndex";
+    [SerializeField] private string displayZoomVar = "gratingZoomIndex";
     //public GameObject frameSupport;
 
-    public float panelThickness;
+    [SerializeField] public float panelThickness { get; private set;}
 
     private bool iamOwner;
     //private VRC.Udon.Common.Interfaces.NetworkEventTarget toTheOwner = VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner;
@@ -34,7 +34,7 @@ public class GratingControl : UdonSharpBehaviour
         metricScaleFactor = 1.0f / (scaleDownFactor * nativeGraphicsRatio);
         graphicsScaleFactor = experimentScale * metricScaleFactor;
     }
-    public int NativeGraphicsRatio
+    private int NativeGraphicsRatio
     {
         get => nativeGraphicsRatio > 0 ? nativeGraphicsRatio : 1;
         set
@@ -54,10 +54,10 @@ public class GratingControl : UdonSharpBehaviour
     private float graphicsColWidth = 0;
 
 
-    [SerializeField]
+    //[SerializeField]
     private float slitPitchNative = 0.8f;
 
-    [SerializeField]
+    //[SerializeField]
     private float rowPitchNative = 0.8f;
 
     private float graphicsColPitch;
@@ -118,8 +118,8 @@ public class GratingControl : UdonSharpBehaviour
     [Header("Grating Scale Factors")]
 
     [Tooltip("Spatial Scaling"), FieldChangeCallback(nameof(ExperimentScale))]
-    public float experimentScale = 10;
-    public float ExperimentScale
+    private float experimentScale = 10;
+    private float ExperimentScale
     {
         get => experimentScale;
         set
@@ -137,10 +137,10 @@ public class GratingControl : UdonSharpBehaviour
     //[SerializeField] 
     private int scaleDownFactor = 1;
     //[SerializeField]
-    float metricScaleFactor = 1;
+    private float metricScaleFactor = 1;
     //[SerializeField]
-    float graphicsScaleFactor = 1;
-    public int ScaleDownFactor 
+    private float graphicsScaleFactor = 1;
+    private int ScaleDownFactor 
     {
         get => scaleDownFactor; 
         set 
@@ -157,7 +157,7 @@ public class GratingControl : UdonSharpBehaviour
 
     [SerializeField, FieldChangeCallback(nameof(ScaleIsChanging))]
     bool scaleIsChanging = true;
-    public bool ScaleIsChanging
+    private bool ScaleIsChanging
     {
         get => scaleIsChanging;
         set

@@ -162,10 +162,11 @@ MonoBehaviour:
   myText: {fileID: 6904069558349692362}
   languageIndex: 0
   texts:
-  - Gravity
+  - Use Gravity
   - "\u91CD\u529B\u306B\u3088\u308B\u52A0\u901F\u5EA6"
   - "\u91CD\u529B\u52A0\u901F\u5EA6"
   - "\u91CD\u529B\u52A0\u901F\u5EA6"
+  - "\uC911\uB825\uC744 \uC774\uC6A9\uD558\uC138\uC694"
 --- !u!114 &6453766206742249470
 MonoBehaviour:
   m_ObjectHideFlags: 0

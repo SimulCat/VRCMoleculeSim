@@ -36,9 +36,10 @@ public class MoleculeExperiment : UdonSharpBehaviour
 
     [Tooltip("Slow Motion"), SerializeField, Range(0.001f, 1f)]
     private float slowMotion = 0.025f;
-
-    public float molecularWeight = 514.5389f;
-    public string moleculeName = "Pthalocyanine";
+    [SerializeField,UdonSynced, FieldChangeCallback(nameof(MolecularWeight))]
+    private float molecularWeight = 514.5389f;
+    [SerializeField] //, UdonSynced, FieldChangeCallback(nameof(MoleculeName))]
+    private string moleculeName = "Pthalocyanine";
     [SerializeField] private TextMeshProUGUI moleculeText;
 
     [Header("Operating Settings-------")]
@@ -51,7 +52,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
     private VRCPlayerApi player;
     private bool iamOwner = false;
 
-    public float MarkerPointSize
+    private float MarkerPointSize
     {
         get => markerPointSize;
         set
@@ -259,7 +260,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
             userSpeedFraction = speedPercent/100f;
             userSpeedTrim = (Mathf.Clamp(userSpeedFraction / randomRange,-1f,1f)+1f)/2f;
             if (isRunning && speedSlider != null)
-                speedSlider.TitleText = string.Format("Speed\n{0}m/s", Mathf.RoundToInt((1 + userSpeedFraction) * avgMoleculeSpeed));
+                speedSlider.TitleText = string.Format("{0}m/s", Mathf.RoundToInt((1 + userSpeedFraction) * avgMoleculeSpeed));
         }
     }
 
@@ -402,7 +403,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
     private void logDebug(string message)
     {
         if (!hasDebug) return;
-        debugTextField.text = message;
+          debugTextField.text = message;
     }
     //[SerializeField]
     private float minDeBroglieWL = 0.1f; // h/mv
@@ -442,14 +443,28 @@ public class MoleculeExperiment : UdonSharpBehaviour
         }
     }
 
-
+    private float prevWeight;
+    private float MolecularWeight
+    {
+        get => molecularWeight;
+        set
+        {
+            molecularWeight = value;
+            if (value != prevWeight)
+            {
+                prevWeight = value;
+                settingsChanged = true;
+                RequestSerialization();
+            }
+        }
+    }
     // Internal Variables
     private ParticleSystem.MainModule mainModule;
 
     private ParticleSystem.Particle[] particles = null;
     private int numParticles;
 
-    void setText(TextMeshProUGUI tmproLabel, string text)
+    private void setText(TextMeshProUGUI tmproLabel, string text)
     {
         if (tmproLabel != null)
             tmproLabel.text = text;
@@ -803,7 +818,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
             trajectoryModule.GravitySim = gravitySim;
             trajectoryModule.UseGravity = useGravity;
         }
-        logDebug(string.Format("G: Has Traj {0}, Traj Valid {1}", hasTrajectoryModule, trajectoryValid));
+        //logDebug(string.Format("G: Has Traj {0}, Traj Valid {1}", hasTrajectoryModule, trajectoryValid));
     }
     private void checkMarkerSizes()
     {
@@ -893,7 +908,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
     //[SerializeField] 
     private Vector2 gratingSize = Vector2.zero;
     private Vector2 startDimensions = Vector2.zero;
-    public int GratingVersion
+    private int GratingVersion
     {
         get => gratingVersion;
         set
@@ -990,7 +1005,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
     }
 
     bool isRunning = false;
-   void Start()
+   private void Start()
     {
         player = Networking.LocalPlayer;
         ReviewOwnerShip();

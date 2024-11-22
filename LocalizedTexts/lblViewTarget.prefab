@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &5896840332134831672
+--- !u!1 &2415319598539032576
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,52 +8,52 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 5896840332134831679}
-  - component: {fileID: 5896840332134831677}
-  - component: {fileID: 5896840332134831678}
-  - component: {fileID: 5825830073860432722}
-  - component: {fileID: 7938672741047246419}
+  - component: {fileID: 6215767946875971430}
+  - component: {fileID: 6470770032897043838}
+  - component: {fileID: 8273246652753544916}
+  - component: {fileID: 8915906782155575854}
+  - component: {fileID: 2994778631674856079}
   m_Layer: 0
-  m_Name: lblPlayStop
+  m_Name: lblViewTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!224 &5896840332134831679
+--- !u!224 &6215767946875971430
 RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5896840332134831672}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 1}
+  m_GameObject: {fileID: 2415319598539032576}
+  m_LocalRotation: {x: -4.2351632e-22, y: -0, z: -1.7763566e-15, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -15, y: -15}
-  m_SizeDelta: {x: 235, y: 30}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 2}
+  m_SizeDelta: {x: 132, y: 37}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &5896840332134831677
+--- !u!222 &6470770032897043838
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5896840332134831672}
+  m_GameObject: {fileID: 2415319598539032576}
   m_CullTransparentMesh: 0
---- !u!114 &5896840332134831678
+--- !u!114 &8273246652753544916
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5896840332134831672}
+  m_GameObject: {fileID: 2415319598539032576}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
@@ -67,17 +67,20 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: SImulation
+  m_text: 'View
+
+    Target Screen'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: ddbcc27b0346e4644a45316aaf00c441, type: 2}
+  m_sharedMaterial: {fileID: 4410821715232426517, guid: ddbcc27b0346e4644a45316aaf00c441,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 3806199552
-  m_fontColor: {r: 0, g: 1, b: 0.8666667, a: 0.8862745}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -94,8 +97,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 16
+  m_fontSizeBase: 16
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -136,13 +139,13 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &5825830073860432722
+--- !u!114 &8915906782155575854
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5896840332134831672}
+  m_GameObject: {fileID: 2415319598539032576}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 16f6e034f954ef14bacd2ec6be5b79c7, type: 3}
@@ -157,22 +160,22 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  _udonSharpBackingUdonBehaviour: {fileID: 7938672741047246419}
-  myText: {fileID: 5896840332134831678}
+  _udonSharpBackingUdonBehaviour: {fileID: 2994778631674856079}
+  myText: {fileID: 8273246652753544916}
   languageIndex: 0
   texts:
-  - Play Simulation
-  - "\u7C92\u5B50\u306E\u52D5\u304D"
-  - "\u73A9\u6A21\u64EC"
-  - "\u73A9\u6A21\u62DF"
-  - "\uC2DC\uBBAC\uB808\uC774\uC158 \uD50C\uB808\uC774"
---- !u!114 &7938672741047246419
+  - View<br>Target Screen
+  - "\u30BF\u30FC\u30B2\u30C3\u30C8\u753B\u9762<br>\u3092\u8868\u793A"
+  - "\u986F\u793A<br>\u76EE\u6A19\u87A2\u5E55"
+  - "\u663E\u793A<br>\u76EE\u6807\u5C4F\u5E55"
+  - "\uD0C0\uAC9F \uD654\uBA74<br>\uD45C\uC2DC"
+--- !u!114 &2994778631674856079
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5896840332134831672}
+  m_GameObject: {fileID: 2415319598539032576}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 45115577ef41a5b4ca741ed302693907, type: 3}
