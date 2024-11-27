@@ -224,7 +224,7 @@ GameObject:
   - component: {fileID: 360189166409573055}
   - component: {fileID: 5169853228482822079}
   m_Layer: 24
-  m_Name: GratingInfo
+  m_Name: GratingInfoCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
