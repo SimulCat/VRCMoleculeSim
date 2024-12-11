@@ -36,11 +36,12 @@ public class MoleculeExperiment : UdonSharpBehaviour
 
     [Tooltip("Slow Motion"), SerializeField, Range(0.001f, 1f)]
     private float slowMotion = 0.025f;
-    [SerializeField,UdonSynced, FieldChangeCallback(nameof(MolecularWeight))]
+    [SerializeField,FieldChangeCallback(nameof(MolecularWeight))]
     private float molecularWeight = 514.5389f;
-    [SerializeField] //, UdonSynced, FieldChangeCallback(nameof(MoleculeName))]
+    [SerializeField,FieldChangeCallback(nameof(MoleculeName))]
     private string moleculeName = "Pthalocyanine";
-    [SerializeField] private TextMeshProUGUI moleculeText;
+    [SerializeField] private TextMeshProUGUI txtParticleName;
+    [SerializeField] private TextMeshProUGUI txtParticleWeight;
 
     [Header("Operating Settings-------")]
     [SerializeField, Tooltip("Default Particle Size"), FieldChangeCallback(nameof(ParticleStartSize))] 
@@ -155,7 +156,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
         {
             if (planckScale != value)
             {
-                planckChanged = true;
+                planckChanged |= true;
                 planckScale = value;
                 gratingVersion = -1;
             }
@@ -189,7 +190,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
                     gratingVersion = -1;
                     settingsChanged = true;
                     gravityChanged = true;
-                    planckChanged = true; 
+                    planckChanged |= true; 
                     particleEmitter.Play();
                 }
             }
@@ -230,7 +231,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
                 gratingToTargetSim = (L2mm * experimentScale) / 1000;
                 settingsChanged = true;
                 gravityChanged = true;
-                planckChanged = true;
+                planckChanged |= true;
                 gratingVersion = 0;
             }
         }
@@ -398,14 +399,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
     //private VRC.Udon.Common.Interfaces.NetworkEventTarget toTheOwner = VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner;
 
     [Header("Debug Stuff")]
-    [SerializeField] TextMeshProUGUI debugTextField;
-    [SerializeField] bool hasDebug = false;
-    private void logDebug(string message)
-    {
-        if (!hasDebug) return;
-          debugTextField.text = message;
-    }
-    //[SerializeField]
+    [SerializeField]
     private float minDeBroglieWL = 0.1f; // h/mv
     //[SerializeField]
     private bool horizReady = false;
@@ -443,21 +437,30 @@ public class MoleculeExperiment : UdonSharpBehaviour
         }
     }
 
-    private float prevWeight;
-    private float MolecularWeight
+    public string MoleculeName {  
+        get => moleculeName;
+        set
+        {
+            moleculeName = value;
+            if (txtParticleName != null)
+                txtParticleName.text = moleculeName;
+        }
+    }
+    private float currentAMU=-1;
+    public float MolecularWeight
     {
         get => molecularWeight;
         set
         {
             molecularWeight = value;
-            if (value != prevWeight)
-            {
-                prevWeight = value;
-                settingsChanged = true;
-                RequestSerialization();
-            }
+            if(molecularWeight != currentAMU)
+                gratingVersion = -1;
+            currentAMU = value;
+            if (txtParticleWeight != null)
+                txtParticleWeight.text = string.Format("{0:#.##}amu", molecularWeight);
         }
     }
+
     // Internal Variables
     private ParticleSystem.MainModule mainModule;
 
@@ -814,11 +817,9 @@ public class MoleculeExperiment : UdonSharpBehaviour
         particleEmitter.Play();
         if (hasTrajectoryModule)
         {
-           // Debug.Log("Has Trajectory Module");
             trajectoryModule.GravitySim = gravitySim;
             trajectoryModule.UseGravity = useGravity;
         }
-        //logDebug(string.Format("G: Has Traj {0}, Traj Valid {1}", hasTrajectoryModule, trajectoryValid));
     }
     private void checkMarkerSizes()
     {
@@ -869,6 +870,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
             targetTransform.position = targetWorldPosition;
         }
     }
+
     private void updateSettings()
     {
         MarkerLifetime = markerLifetime;
@@ -879,11 +881,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
         maxSimSpeed = avgSimulationSpeed * (1 + randomRange);
         minSimSpeed = avgSimulationSpeed * (1 - randomRange);
         maxLifetimeAfterGrating = 1.25f * gratingToTargetSim / minSimSpeed;
-        minDeBroglieWL = (h * PlanckScale) / (AMU_ToKg * molecularWeight * avgMoleculeSpeed*(1+randomRange));
-        if (moleculeText != null)
-        {
-            moleculeText.text = string.Format("Particles:<b>\n<indent=15%>{0}</b></indent>\nMolecular Weight:\n<b><indent=15%>{1:#.##}</b></indent>", moleculeName, molecularWeight);
-        }
         if (hasTrajectoryModule)
         {
             trajectoryModule.loadSettings(maxSimSpeed, minSimSpeed, gravitySim, useGravity, emitToGratingSim);
@@ -892,7 +889,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
         else
             trajectoryValid = false;
         updateSourceElevation();
-        //logDebug(string.Format("U: Has Traj {0}, Traj Valid {1}", hasTrajectoryModule, trajectoryValid));
 
         trajectoryChanged = false;
         setComponentPositions();
@@ -913,11 +909,12 @@ public class MoleculeExperiment : UdonSharpBehaviour
         get => gratingVersion;
         set
         {
+
             bool force = gratingVersion < 0 || planckChanged;
             gratingVersion = value;
             if (!hasGrating)
                 return;
-            planckChanged = false;
+            planckChanged = false; 
             gratingSize = gratingControl.ActiveGratingSize;
             gratingThickness = gratingControl.panelThickness*1.5f;
             startDimensions = gratingSize/1.8f;
@@ -935,6 +932,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
             gratingMarkerSize = experimentScale * Mathf.Min(gratingControl.SlitHeightMetres, gratingControl.SlitWidthMetres);
             //if (hasGratingDecorator)
             //    gratingDecals.ParticleSize = gratingMarkerSize;
+            minDeBroglieWL = (h * PlanckScale) / (AMU_ToKg * molecularWeight * avgMoleculeSpeed * (1 + randomRange));
 
             if (horizChanged && horizReady && apertureCounts.x > 0)
                 horizontalScatter.SetGratingByPitch(apertureCounts.x, apertureSize.x, aperturePitches.x, minDeBroglieWL);
@@ -1010,7 +1008,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
         player = Networking.LocalPlayer;
         ReviewOwnerShip();
 
-        hasDebug = (debugTextField != null) && debugTextField.gameObject.activeSelf;
         isRunning = true;
         if (trajectoryModule == null)
             trajectoryModule = GetComponent<TrajectoryModule>();
@@ -1065,12 +1062,15 @@ public class MoleculeExperiment : UdonSharpBehaviour
         hasTarget = targetTransform != null;
         hasTargetDecorator = targetDisplay != null;
         setComponentPositions();
-        // Forces initialise checkboxes if present.
+        // Initialise checkboxes if present.
         UseGravity = useGravity;
         UseQuantumScatter = useQuantumScatter;
         UseMonochrome = useMonochrome;
         GravityIndex = gravityIndex;
         PlanckIndex = planckIndex;
+        // Initialise Particle Type
+        MolecularWeight = molecularWeight;
+        MoleculeName = moleculeName;
         // Forces review of settngs after start
         gravityChanged = true;
         settingsChanged = true;
