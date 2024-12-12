@@ -1,4 +1,5 @@
 ﻿
+using TMPro;
 using UdonSharp;
 using UnityEngine;
 using UnityEngine.UI;
@@ -24,6 +25,14 @@ public class ParticleSelect : UdonSharpBehaviour
 
     private VRCPlayerApi player;
     private bool locallyOwned = false;
+   
+    [SerializeField]
+    private TextMeshProUGUI txtParticleWeight;
+    [SerializeField]
+    private TextMeshProUGUI txtParticleName;
+
+    
+
     public override void OnOwnershipTransferred(VRCPlayerApi player)
     {
         locallyOwned = Networking.IsOwner(this.gameObject);
@@ -46,10 +55,12 @@ public class ParticleSelect : UdonSharpBehaviour
             }
             RequestSerialization();  
             if (experiment != null)
-            {
-                experiment.MoleculeName = particleNames[particleIndex];
                 experiment.MolecularWeight = molecularWeights[particleIndex];
-            }
+            if (txtParticleWeight != null)
+                txtParticleWeight.text = string.Format("{0:#.##}amu", molecularWeights[particleIndex]);
+            if (txtParticleName != null)
+                txtParticleName.text = particleNames[particleIndex];
+
             prevIndex = particleIndex;
         }
     }
@@ -92,6 +103,6 @@ public class ParticleSelect : UdonSharpBehaviour
             }
         }
         if (locallyOwned) 
-            particleIndex = ParticleIndex;
+            ParticleIndex = particleIndex;
     }
 }

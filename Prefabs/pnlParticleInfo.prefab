@@ -79,6 +79,8 @@ MonoBehaviour:
   btnNext: {fileID: 57458050726111780}
   btnPrev: {fileID: 3259633126979239590}
   particleIndex: 3
+  txtParticleWeight: {fileID: 5402646730802664542}
+  txtParticleName: {fileID: 7014590400071613532}
 --- !u!114 &6129782494478771486
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -916,7 +918,7 @@ GameObject:
   - component: {fileID: 6369956745112290506}
   - component: {fileID: 7014590400071613532}
   m_Layer: 17
-  m_Name: txtParticleType
+  m_Name: txtParticleName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

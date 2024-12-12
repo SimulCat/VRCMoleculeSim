@@ -38,10 +38,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
     private float slowMotion = 0.025f;
     [SerializeField,FieldChangeCallback(nameof(MolecularWeight))]
     private float molecularWeight = 514.5389f;
-    [SerializeField,FieldChangeCallback(nameof(MoleculeName))]
-    private string moleculeName = "Pthalocyanine";
-    [SerializeField] private TextMeshProUGUI txtParticleName;
-    [SerializeField] private TextMeshProUGUI txtParticleWeight;
 
     [Header("Operating Settings-------")]
     [SerializeField, Tooltip("Default Particle Size"), FieldChangeCallback(nameof(ParticleStartSize))] 
@@ -437,15 +433,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
         }
     }
 
-    public string MoleculeName {  
-        get => moleculeName;
-        set
-        {
-            moleculeName = value;
-            if (txtParticleName != null)
-                txtParticleName.text = moleculeName;
-        }
-    }
     private float currentAMU=-1;
     public float MolecularWeight
     {
@@ -456,8 +443,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
             if(molecularWeight != currentAMU)
                 gratingVersion = -1;
             currentAMU = value;
-            if (txtParticleWeight != null)
-                txtParticleWeight.text = string.Format("{0:#.##}amu", molecularWeight);
         }
     }
 
@@ -1070,7 +1055,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
         PlanckIndex = planckIndex;
         // Initialise Particle Type
         MolecularWeight = molecularWeight;
-        MoleculeName = moleculeName;
         // Forces review of settngs after start
         gravityChanged = true;
         settingsChanged = true;
