@@ -37,7 +37,7 @@ public class TrajectoryModule : UdonSharpBehaviour
 
     public Color lerpColour(float frac)
     {
-        return spectrumColour(Mathf.Lerp(700, 400, frac));
+        return spectrumColour(Mathf.Lerp(725, 380, frac));
     }
 
     public Color spectrumColour(float wavelength, float gamma = 0.8f)
