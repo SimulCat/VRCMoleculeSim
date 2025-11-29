@@ -2,8 +2,6 @@
 using TMPro;
 using UdonSharp;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.UIElements;
 using VRC.SDKBase;
 using VRC.Udon;
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)] // Keeps performance up
@@ -242,7 +240,7 @@ public class GratingControl : UdonSharpBehaviour
 
     private void UpdateLabels()
     {
-        setText(labelGratingScale,string.Format ("1:{0}",scaleDownFactor));
+        setText(labelGratingScale,string.Format ("1:{0}",ScaleDownFactor));
         if (gratingDescription == null)
             return;
         string gratingdesc = 
