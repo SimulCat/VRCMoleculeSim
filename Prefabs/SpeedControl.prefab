@@ -385,8 +385,8 @@ MonoBehaviour:
   m_FillRect: {fileID: 6571892969455148276}
   m_HandleRect: {fileID: 8270037076779914949}
   m_Direction: 2
-  m_MinValue: -50
-  m_MaxValue: 50
+  m_MinValue: 0
+  m_MaxValue: 1
   m_WholeNumbers: 1
   m_Value: 0
   m_OnValueChanged:
@@ -477,6 +477,7 @@ MonoBehaviour:
   hideLabel: 1
   unitsInteger: 0
   displayInteger: 0
+  displayScale: 1
   sliderUnit: '%'
   SliderClient: {fileID: 0}
   clientVariableName: speedPercent
