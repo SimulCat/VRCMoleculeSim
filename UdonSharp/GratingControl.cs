@@ -8,7 +8,6 @@ using VRC.Udon;
 
 public class GratingControl : UdonSharpBehaviour
 {
-    Transform gratingXfrm;
     [SerializeField]
     Transform frameSupport;
     public GameObject barPrefab;
@@ -493,14 +492,14 @@ public class GratingControl : UdonSharpBehaviour
         return false;
     }
 
-    GameObject LocalFromPrefab(GameObject prototype, string name, Transform xfrm)
+    GameObject LocalFromPrefab(GameObject prototype, string name)
     {
         GameObject result = Instantiate(prototype);
         if (result == null)
         {
             return result;
         }
-        result.transform.SetParent(xfrm);
+        result.transform.SetParent(transform);
         result.name = name;
         result.transform.localPosition = Vector3.zero;
         result.transform.localRotation = Quaternion.identity;
@@ -618,7 +617,7 @@ public class GratingControl : UdonSharpBehaviour
         {
             if (theBars[i] == null)
             {
-                theBars[i] = LocalFromPrefab(barPrefab, "Bar_" + (i + 1).ToString(), gratingXfrm);
+                theBars[i] = LocalFromPrefab(barPrefab, "Bar_" + (i + 1).ToString());
                 theBars[i].transform.position = new Vector3(0, 0, 0);
                 theBars[i].SetActive(false);
             }
@@ -627,19 +626,19 @@ public class GratingControl : UdonSharpBehaviour
         {
             if (theRails[i] == null)
             {
-                theRails[i] = LocalFromPrefab(barPrefab, "Rail_" + (i + 1).ToString(), gratingXfrm);
+                theRails[i] = LocalFromPrefab(barPrefab, "Rail_" + (i + 1).ToString());
                 theRails[i].transform.position = new Vector3(0, 0, 0);
                 theRails[i].SetActive(false);
             }
         }
         if (panelTop == null)
-            panelTop = LocalFromPrefab(barPrefab, "TopPanel", gratingXfrm);
+            panelTop = LocalFromPrefab(barPrefab, "TopPanel");
         if (panelBottom == null)
-            panelBottom = LocalFromPrefab(barPrefab, "BottomPanel", gratingXfrm);
+            panelBottom = LocalFromPrefab(barPrefab, "BottomPanel");
         if (panelLeft == null)
-            panelLeft = LocalFromPrefab(barPrefab, "LeftPanel", gratingXfrm);
+            panelLeft = LocalFromPrefab(barPrefab, "LeftPanel");
         if (panelRight == null)
-            panelRight = LocalFromPrefab(barPrefab, "RightPanel", gratingXfrm);
+            panelRight = LocalFromPrefab(barPrefab, "RightPanel");
     }
 
 
@@ -652,7 +651,6 @@ public class GratingControl : UdonSharpBehaviour
     void Start()
     {
         iHaveFrame = frameSupport != null;
-        gratingXfrm = transform;
         player = Networking.LocalPlayer;
         iHaveWidthSlider = gratingWidthSlider != null;
         iHaveSlitWidthCtl = slitWidthSlider != null;

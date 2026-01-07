@@ -673,7 +673,7 @@ PrefabInstance:
         type: 3}
       propertyPath: serializedProgramAsset
       value: 
-      objectReference: {fileID: 11400000, guid: 1c1dabace3c87094296b96c691bf1f39,
+      objectReference: {fileID: 11400000, guid: 38ec9b35255226f4a99b33adee259886,
         type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -709,7 +709,7 @@ PrefabInstance:
         type: 3}
       propertyPath: serializedProgramAsset
       value: 
-      objectReference: {fileID: 11400000, guid: ced71ab85058ece4c81683e1696e096c,
+      objectReference: {fileID: 11400000, guid: db1a9e79a4287cd4d8e931fa4d6c3abd,
         type: 2}
     - target: {fileID: 7618224890888347476, guid: 55364beb7ba2a8947a1432fca720b16d,
         type: 3}
