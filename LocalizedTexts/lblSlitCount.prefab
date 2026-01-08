@@ -77,8 +77,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294959104
-  m_fontColor: {r: 0, g: 0.8784314, b: 1, a: 1}
+    rgba: 4294965664
+  m_fontColor: {r: 0.627451, g: 0.9764706, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -163,10 +163,12 @@ MonoBehaviour:
   languageIndex: 0
   texts:
   - Slit Count
-  - "\u5217\u306E\u6570"
-  - "\u72F9\u7E2B\u6578\u91CF"
-  - "\u72ED\u7F1D\u6570\u91CF"
-  - "\uC2AC\uB9BF\uC758 \uAC1C\uC218"
+  - "<size=110%>\u5217\u306E\u6570"
+  - "<size=110%>\u72F9\u7E2B\u6578\u91CF"
+  - "<size=110%>\u72ED\u7F1D\u6570\u91CF"
+  - "<size=110%>\uC2AC\uB9BF\uC758 \uAC1C\uC218"
+  - Contagem de fendas
+  - Nombre de fentes
 --- !u!114 &3492755467929644113
 MonoBehaviour:
   m_ObjectHideFlags: 0

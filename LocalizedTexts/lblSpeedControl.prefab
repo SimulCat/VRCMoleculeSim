@@ -29,8 +29,8 @@ RectTransform:
   m_GameObject: {fileID: 6579194336775172433}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -0.000026490956}
-  m_LocalScale: {x: 0.6666667, y: 0.66666657, z: 0.6666667}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -79,8 +79,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4292730880
-  m_fontColor: {r: 0, g: 0.8784314, b: 0.8666667, a: 1}
+    rgba: 4294965664
+  m_fontColor: {r: 0.627451, g: 0.9764706, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -105,11 +105,11 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 1
   m_HorizontalAlignment: 2
-  m_VerticalAlignment: 512
+  m_VerticalAlignment: 1024
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
-  m_lineSpacing: 0
+  m_lineSpacing: -20
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
@@ -165,10 +165,14 @@ MonoBehaviour:
   languageIndex: 0
   texts:
   - Particle<br>Speed
-  - "\u7C92\u5B50\u901F\u5EA6"
-  - "\u7C92\u5B50\u901F\u5EA6"
-  - "\u7C92\u5B50\u901F\u5EA6"
-  - "\uC785\uC790 \uC18D\uB3C4"
+  - "<size=110%>\u7C92\u5B50\u901F\u5EA6"
+  - "<size=110%>\u7C92\u5B50\u901F\u5EA6"
+  - "<size=110%>\u7C92\u5B50\u901F\u5EA6"
+  - "<size=110%>\uC785\uC790 \uC18D\uB3C4"
+  - "Part\xEDcula\r\nVelocidade"
+  - 'Particule
+
+    Vitesse'
 --- !u!114 &228436834055096863
 MonoBehaviour:
   m_ObjectHideFlags: 0

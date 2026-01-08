@@ -165,10 +165,12 @@ MonoBehaviour:
   languageIndex: 0
   texts:
   - Paricle<br>Size
-  - "\u7C92\u5F84"
-  - "\u7C92\u5F91"
-  - "\u9897\u7C92\u5927\u5C0F"
-  - "\uC785\uC790 \uD06C\uAE30"
+  - "<size=110%>\u7C92\u5F84"
+  - "<size=110%>\u7C92\u5F91"
+  - "<size=110%>\u9897\u7C92\u5927\u5C0F"
+  - "<size=110%>\uC785\uC790 \uD06C\uAE30"
+  - "Part\xEDcula\r\nTamanho"
+  - Taille des<br>particules
 --- !u!114 &1572000083225732230
 MonoBehaviour:
   m_ObjectHideFlags: 0

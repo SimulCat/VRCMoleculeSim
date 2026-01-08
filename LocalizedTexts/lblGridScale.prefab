@@ -69,15 +69,16 @@ MonoBehaviour:
       m_Calls: []
   m_text: Grating Scale Ratio
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: ddbcc27b0346e4644a45316aaf00c441, type: 2}
+  m_sharedMaterial: {fileID: 4410821715232426517, guid: ddbcc27b0346e4644a45316aaf00c441,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294959104
-  m_fontColor: {r: 0, g: 0.8784314, b: 1, a: 1}
+    rgba: 4294965664
+  m_fontColor: {r: 0.627451, g: 0.9764706, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -94,8 +95,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18
-  m_fontSizeBase: 18
+  m_fontSize: 16
+  m_fontSizeBase: 16
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -162,10 +163,12 @@ MonoBehaviour:
   languageIndex: 0
   texts:
   - Grating Scale Ratio
-  - "\u683C\u5B50\u30B5\u30A4\u30BA\u6BD4"
-  - "\u5149\u67F5\u5C3A\u5BF8\u6BD4"
-  - "\u5149\u6805\u5C3A\u5BF8\u6BD4"
-  - "\uACA9\uC790 \uD06C\uAE30 \uBE44\uC728"
+  - "<Size=110%>\u683C\u5B50\u30B5\u30A4\u30BA\u6BD4"
+  - "<Size=110%>\u5149\u67F5\u5C3A\u5BF8\u6BD4"
+  - "<Size=110%>\u5149\u6805\u5C3A\u5BF8\u6BD4"
+  - "<Size=110%>\uACA9\uC790 \uD06C\uAE30 \uBE44\uC728"
+  - Escala da grade
+  - "\xC9chelle du r\xE2teau"
 --- !u!114 &7843602706301217252
 MonoBehaviour:
   m_ObjectHideFlags: 0

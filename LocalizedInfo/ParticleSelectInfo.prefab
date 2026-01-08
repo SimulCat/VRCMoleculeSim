@@ -203,20 +203,23 @@ MonoBehaviour:
   - "\u9078\u64C7\u7C92\u5B50\u985E\u578B"
   - "\u9009\u62E9\u7C92\u5B50\u7C7B\u578B"
   - "\uC785\uC790 \uC720\uD615 \uC120\uD0DD"
+  - "Selecione o tipo de part\xEDcula"
+  - "S\xE9lectionner le type de particule"
   pageBodies:
   - Selects from a range of particle types ranging in mass from 1amu (Neutron) through
-    to 720 (C60 Fullerine).
-  - "\u5F9E\u8CEA\u91CF\u7BC4\u570D\u5F9E 1amu\uFF08\u4E2D\u5B50\uFF09\u5230 720\uFF08C60
-    \u5BCC\u52D2\u70EF\uFF09\u7684\u4E00\u7CFB\u5217\u7C92\u5B50\u985E\u578B\u4E2D\u9032\u884C\u9078\u64C7\u3002"
-  - "<b>\u9078\u64C7\uFF1A</b>\r\n<indent=4%><b>\u632F\u5E45\uFF1A</b>\u986F\u793A\u8907\u6578\u6CE2\u632F\u5E45\u7684\u9AD8\u5EA6
-    (\u5BE6\u90E8) \u901F\u5EA6 (\u865B\u90E8) \u548C\u5E45\u5EA6\u3002\r\n\r\n<b>\u80FD\u91CF\u901A\u91CF\uFF1A</b>\u986F\u793A\u4F4D\u52E2
-    (\u5BE6\u90E8\u7684\u5E73\u65B9)\u3001\u52D5\u80FD (\u865B\u90E8\u7684\u5E73\u65B9)
-    \u548C\u7E3D\u80FD\u91CF\u50B3\u8F38/\u52D5\u91CF\u3002"
-  - "\u4ECE\u8D28\u91CF\u8303\u56F4\u4ECE 1amu\uFF08\u4E2D\u5B50\uFF09\u5230 720\uFF08C60
-    \u5BCC\u52D2\u70EF\uFF09\u7684\u7C92\u5B50\u7C7B\u578B\u4E2D\u8FDB\u884C\u9009\u62E9\u3002"
-  - "1amu(\uC911\uC131\uC790)\uBD80\uD130 720(C60 \uD480\uB7EC\uB9B0)\uAE4C\uC9C0
-    \uB2E4\uC591\uD55C \uC9C8\uB7C9\uC758 \uC785\uC790 \uC720\uD615 \uC911\uC5D0\uC11C
-    \uC120\uD0DD\uD569\uB2C8\uB2E4."
+    to 720 (C60 Fullerene).
+  - "\u8CEA\u91CF\u304C 1amu (\u4E2D\u6027\u5B50) \u304B\u3089 720 (C60 \u30D5\u30E9\u30FC\u30EC\u30F3)
+    \u307E\u3067\u306E\u3055\u307E\u3056\u307E\u306A\u7C92\u5B50\u30BF\u30A4\u30D7\u304B\u3089\u9078\u629E\u3057\u307E\u3059\u3002"
+  - "\u53EF\u9078\u64C7\u5F9E\u8CEA\u91CF\u7BC4\u570D\u5F9E 1amu\uFF08\u4E2D\u5B50\uFF09\u5230
+    720\uFF08C60 \u5BCC\u52D2\u70EF\uFF09\u7684\u5404\u7A2E\u7C92\u5B50\u985E\u578B\u3002"
+  - "\u53EF\u9009\u62E9\u4ECE\u8D28\u91CF\u8303\u56F4\u4ECE 1amu\uFF08\u4E2D\u5B50\uFF09\u5230
+    720\uFF08C60 \u5BCC\u52D2\u70EF\uFF09\u7684\u5404\u79CD\u7C92\u5B50\u7C7B\u578B\u3002"
+  - "\uC9C8\uB7C9\uC774 1amu(\uC911\uC131\uC790)\uBD80\uD130 720amu(C60 \uD480\uB7EC\uB80C)\uAE4C\uC9C0
+    \uB2E4\uC591\uD55C \uC785\uC790 \uC720\uD615 \uC911\uC5D0\uC11C \uC120\uD0DD\uD569\uB2C8\uB2E4."
+  - "Seleciona entre uma variedade de tipos de part\xEDculas com massas que variam
+    de 1 u.m.a. (n\xEAutron) a 720 u.m.a. (fulereno C60)."
+  - "S\xE9lectionne parmi une gamme de types de particules dont la masse varie de
+    1 amu (neutron) \xE0 720 (fuller\xE8ne C60)."
   languageIndex: 0
 --- !u!114 &3411093699688567307
 MonoBehaviour:
@@ -237,7 +240,7 @@ MonoBehaviour:
   SynchronizePosition: 0
   AllowCollisionOwnershipTransfer: 0
   Reliable: 0
-  _syncMethod: 1
+  _syncMethod: 3
   serializedProgramAsset: {fileID: 11400000, guid: db1a9e79a4287cd4d8e931fa4d6c3abd,
     type: 2}
   programSource: {fileID: 11400000, guid: 530112de8551329498e25f888f6d27e6, type: 2}

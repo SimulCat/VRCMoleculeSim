@@ -94,7 +94,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 2100000, guid: 35630e38b4e5ffb40b44ec5348b4333f, type: 2}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0.40392157, b: 0.39607844, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -170,7 +170,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 2100000, guid: 35630e38b4e5ffb40b44ec5348b4333f, type: 2}
-  m_Color: {r: 1, g: 0.9829204, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -281,7 +281,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 2100000, guid: 35630e38b4e5ffb40b44ec5348b4333f, type: 2}
-  m_Color: {r: 0, g: 0.9999995, b: 1, a: 0.84313726}
+  m_Color: {r: 0.3529412, g: 1, b: 0.92156863, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -362,11 +362,11 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 0, g: 0.8784314, b: 1, a: 1}
-    m_HighlightedColor: {r: 1, g: 0.94509804, b: 0, a: 1}
-    m_PressedColor: {r: 1, g: 0.3254902, b: 0.3254902, a: 1}
-    m_SelectedColor: {r: 1, g: 0.81960785, b: 0, a: 1}
-    m_DisabledColor: {r: 0.6901961, g: 0.24313726, b: 0.4862745, a: 0.5019608}
+    m_NormalColor: {r: 0.94509804, g: 0, b: 0.6117647, a: 1}
+    m_HighlightedColor: {r: 0.99215686, g: 0.40784314, b: 0.76862746, a: 1}
+    m_PressedColor: {r: 0, g: 1, b: 0.77254903, a: 1}
+    m_SelectedColor: {r: 1, g: 0.45490196, b: 0, a: 1}
+    m_DisabledColor: {r: 0.41568628, g: 0.40392157, b: 0.40392157, a: 0.4745098}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -506,7 +506,7 @@ MonoBehaviour:
   AllowCollisionOwnershipTransfer: 0
   Reliable: 0
   _syncMethod: 3
-  serializedProgramAsset: {fileID: 11400000, guid: 75db6c6bcf5bf924a84eb83ca8d35c88,
+  serializedProgramAsset: {fileID: 11400000, guid: 40dcf7293c8c01746aeb434cee411aed,
     type: 2}
   programSource: {fileID: 11400000, guid: d3b3e99d55ff40f42a509883058c8126, type: 2}
   serializedPublicVariablesBytesString: Ai8AAAAAATIAAABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlAFQAYQBiAGwAZQAsACAAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4AAAAAAAYBAAAAAAAAACcBBAAAAHQAeQBwAGUAAWgAAABTAHkAcwB0AGUAbQAuAEMAbwBsAGwAZQBjAHQAaQBvAG4AcwAuAEcAZQBuAGUAcgBpAGMALgBMAGkAcwB0AGAAMQBbAFsAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4ALgBJAG4AdABlAHIAZgBhAGMAZQBzAC4ASQBVAGQAbwBuAFYAYQByAGkAYQBiAGwAZQAsACAAVgBSAEMALgBVAGQAbwBuAC4AQwBvAG0AbQBvAG4AXQBdACwAIABtAHMAYwBvAHIAbABpAGIAAQEJAAAAVgBhAHIAaQBhAGIAbABlAHMALwEAAAABaAAAAFMAeQBzAHQAZQBtAC4AQwBvAGwAbABlAGMAdABpAG8AbgBzAC4ARwBlAG4AZQByAGkAYwAuAEwAaQBzAHQAYAAxAFsAWwBWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAEkAbgB0AGUAcgBmAGEAYwBlAHMALgBJAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlACwAIABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgBdAF0ALAAgAG0AcwBjAG8AcgBsAGkAYgABAAAABgEAAAAAAAAAAi8CAAAAAUkAAABWAFIAQwAuAFUAZABvAG4ALgBDAG8AbQBtAG8AbgAuAFUAZABvAG4AVgBhAHIAaQBhAGIAbABlAGAAMQBbAFsAUwB5AHMAdABlAG0ALgBJAG4AdAAzADIALAAgAG0AcwBjAG8AcgBsAGkAYgBdAF0ALAAgAFYAUgBDAC4AVQBkAG8AbgAuAEMAbwBtAG0AbwBuAAIAAAAGAgAAAAAAAAAnAQQAAAB0AHkAcABlAAEXAAAAUwB5AHMAdABlAG0ALgBTAHQAcgBpAG4AZwAsACAAbQBzAGMAbwByAGwAaQBiACcBCgAAAFMAeQBtAGIAbwBsAE4AYQBtAGUAAR8AAABfAF8AXwBVAGQAbwBuAFMAaABhAHIAcABCAGUAaABhAHYAaQBvAHUAcgBWAGUAcgBzAGkAbwBuAF8AXwBfACcBBAAAAHQAeQBwAGUAARYAAABTAHkAcwB0AGUAbQAuAEkAbgB0ADMAMgAsACAAbQBzAGMAbwByAGwAaQBiABcBBQAAAFYAYQBsAHUAZQACAAAABwUHBQcF
@@ -524,7 +524,7 @@ GameObject:
   - component: {fileID: 7955639633576348334}
   - component: {fileID: 3015083800103562389}
   m_Layer: 0
-  m_Name: ValueLabel
+  m_Name: SpeedValue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -664,7 +664,7 @@ PrefabInstance:
         type: 3}
       propertyPath: serializedProgramAsset
       value: 
-      objectReference: {fileID: 11400000, guid: 38ec9b35255226f4a99b33adee259886,
+      objectReference: {fileID: 11400000, guid: 950399a6036d27343ad484dfae361065,
         type: 2}
     - target: {fileID: 4023748617893482579, guid: 3e8dcf86e31cf5544a75b41d784d9e15,
         type: 3}
@@ -680,11 +680,6 @@ PrefabInstance:
         type: 3}
       propertyPath: texts.Array.data[0]
       value: Particle Speed
-      objectReference: {fileID: 0}
-    - target: {fileID: 7534976570687114885, guid: 3e8dcf86e31cf5544a75b41d784d9e15,
-        type: 3}
-      propertyPath: texts.Array.data[1]
-      value: "\u901F\u5EA6\u3092\u8ABF\u6574\u3059\u308B"
       objectReference: {fileID: 0}
     - target: {fileID: 7534976570687114885, guid: 3e8dcf86e31cf5544a75b41d784d9e15,
         type: 3}
@@ -731,21 +726,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_SizeDelta.y
       value: 50
-      objectReference: {fileID: 0}
-    - target: {fileID: 8033135089237453964, guid: 3e8dcf86e31cf5544a75b41d784d9e15,
-        type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.6666667
-      objectReference: {fileID: 0}
-    - target: {fileID: 8033135089237453964, guid: 3e8dcf86e31cf5544a75b41d784d9e15,
-        type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.66666657
-      objectReference: {fileID: 0}
-    - target: {fileID: 8033135089237453964, guid: 3e8dcf86e31cf5544a75b41d784d9e15,
-        type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.6666667
       objectReference: {fileID: 0}
     - target: {fileID: 8033135089237453964, guid: 3e8dcf86e31cf5544a75b41d784d9e15,
         type: 3}

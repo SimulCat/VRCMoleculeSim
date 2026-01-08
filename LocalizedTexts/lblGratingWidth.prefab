@@ -77,8 +77,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4292465152
-  m_fontColor: {r: 0, g: 0.8235294, b: 0.8509804, a: 1}
+    rgba: 4294965664
+  m_fontColor: {r: 0.627451, g: 0.9764706, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -95,8 +95,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20
-  m_fontSizeBase: 20
+  m_fontSize: 18
+  m_fontSizeBase: 18
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -163,10 +163,12 @@ MonoBehaviour:
   languageIndex: 0
   texts:
   - Grating Width
-  - "\u683C\u5B50\u5E45"
-  - "\u5149\u67F5\u5BEC\u5EA6"
-  - "\u5149\u6805\u5BBD\u5EA6"
-  - "\uACA9\uC790 \uD3ED"
+  - "<size=110%>\u683C\u5B50\u5E45"
+  - "<size=110%>\u5149\u67F5\u5BEC\u5EA6"
+  - "<size=110%>\u5149\u6805\u5BBD\u5EA6"
+  - "<size=110%>\uACA9\uC790 \uD3ED"
+  - Largura da grade
+  - Largeur de la grille
 --- !u!114 &6926500560205745907
 MonoBehaviour:
   m_ObjectHideFlags: 0

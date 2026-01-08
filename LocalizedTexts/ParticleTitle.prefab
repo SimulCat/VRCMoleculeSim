@@ -67,7 +67,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Particle Beam Settings
+  m_text: Particle Beam
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ddbcc27b0346e4644a45316aaf00c441, type: 2}
   m_sharedMaterial: {fileID: 4410821715232426517, guid: ddbcc27b0346e4644a45316aaf00c441,
@@ -77,8 +77,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294959104
-  m_fontColor: {r: 0, g: 0.8784314, b: 1, a: 1}
+    rgba: 4294965664
+  m_fontColor: {r: 0.627451, g: 0.9764706, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -95,19 +95,19 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 25
+  m_fontSizeBase: 25
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 1
   m_HorizontalAlignment: 2
-  m_VerticalAlignment: 512
+  m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
-  m_lineSpacing: 0
+  m_lineSpacing: -35
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
@@ -163,10 +163,12 @@ MonoBehaviour:
   languageIndex: 0
   texts:
   - Particle Beam Settings
-  - "\u7C92\u5B50\u30D3\u30FC\u30E0\u8A2D\u5B9A"
-  - "\u7C92\u5B50\u675F\u8A2D\u5B9A"
-  - "\u7C92\u5B50\u675F\u8BBE\u7F6E"
-  - "\uD30C\uD2F0\uD074 \uBE54 \uC124\uC815"
+  - "<size=110%>\u7C92\u5B50\u30D3\u30FC\u30E0\u8A2D\u5B9A"
+  - "<size=110%>\u7C92\u5B50\u675F\u8A2D\u5B9A"
+  - "<size=110%>\u7C92\u5B50\u675F\u8BBE\u7F6E"
+  - "<size=110%>\uD30C\uD2F0\uD074 \uBE54 \uC124\uC815"
+  - "Feixe de Part\xEDculas"
+  - Faisceau de particules
 --- !u!114 &2865174433006474376
 MonoBehaviour:
   m_ObjectHideFlags: 0

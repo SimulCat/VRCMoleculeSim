@@ -77,8 +77,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294959104
-  m_fontColor: {r: 0, g: 0.8784314, b: 1, a: 1}
+    rgba: 4294965664
+  m_fontColor: {r: 0.627451, g: 0.9764706, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -103,11 +103,11 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 1
   m_HorizontalAlignment: 2
-  m_VerticalAlignment: 512
+  m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
-  m_lineSpacing: 0
+  m_lineSpacing: -40
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
@@ -163,10 +163,12 @@ MonoBehaviour:
   languageIndex: 0
   texts:
   - Grating Scale<br>& Dimensions
-  - "\u683C\u5B50\u5BF8\u6CD5\u3068\u30B9\u30B1\u30FC\u30EB"
-  - "\u5149\u67F5\u5C3A\u5BF8\u548C\u6BD4\u4F8B"
-  - "\u5149\u6805\u5C3A\u5BF8\u548C\u523B\u5EA6"
-  - "\uACA9\uC790 \uCE58\uC218 \uBC0F \uADDC\uBAA8"
+  - "<size-110%>\u683C\u5B50\u5BF8\u6CD5\u3068\u30B9\u30B1\u30FC\u30EB"
+  - "<size-110%>\u5149\u67F5\u5C3A\u5BF8\u548C\u6BD4\u4F8B"
+  - "<size-110%>\u5149\u6805\u5C3A\u5BF8\u548C\u523B\u5EA6"
+  - "<size-110%>\uACA9\uC790 \uCE58\uC218 \uBC0F \uADDC\uBAA8"
+  - "Escala e dimens\xF5es da grade"
+  - "\xC9chelle et dimensions de la grille"
 --- !u!114 &542168923188445577
 MonoBehaviour:
   m_ObjectHideFlags: 0

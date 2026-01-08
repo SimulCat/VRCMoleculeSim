@@ -37,7 +37,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
   m_AnchoredPosition: {x: 80, y: -9}
-  m_SizeDelta: {x: 125, y: 17}
+  m_SizeDelta: {x: 190, y: 17}
   m_Pivot: {x: 0, y: 0}
 --- !u!222 &6467470801351755871
 CanvasRenderer:
@@ -163,10 +163,12 @@ MonoBehaviour:
   languageIndex: 0
   texts:
   - Monochrome
-  - "\u30E2\u30CE\u30AF\u30ED\u30FC\u30E0"
-  - "\u55AE\u8272"
-  - "\u5355\u8272"
-  - "\uB2E8\uC0C9\uD654"
+  - "<size=110%>\u30E2\u30CE\u30AF\u30ED\u30FC\u30E0"
+  - "<size=110%>\u55AE\u8272"
+  - "<size=110%>\u5355\u8272"
+  - "<size=110%>\uB2E8\uC0C9\uD654"
+  - "Monocrom\xE1tica"
+  - Monochrome
 --- !u!114 &3440062169347855749
 MonoBehaviour:
   m_ObjectHideFlags: 0

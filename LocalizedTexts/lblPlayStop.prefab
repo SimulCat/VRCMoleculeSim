@@ -166,6 +166,8 @@ MonoBehaviour:
   - "\u73A9\u6A21\u64EC"
   - "\u73A9\u6A21\u62DF"
   - "\uC2DC\uBBAC\uB808\uC774\uC158 \uD50C\uB808\uC774"
+  - "Simula\xE7\xE3o de jogo"
+  - Simulation de jeu
 --- !u!114 &7938672741047246419
 MonoBehaviour:
   m_ObjectHideFlags: 0
