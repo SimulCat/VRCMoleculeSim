@@ -167,8 +167,8 @@ MonoBehaviour:
   - "<size=110%>\u96A8\u6A5F\u901F\u5EA6"
   - "<size=110%>\u968F\u673A\u901F\u5EA6"
   - "<size=110%>\uB79C\uB364 \uC785\uC790 \uC18D\uB3C4"
-  - "Velocidade aleat\xF3ria"
-  - "Vitesse al\xE9atoire"
+  - "Velocidade<br>aleat\xF3ria"
+  - "Vitesse<br>al\xE9atoire"
 --- !u!114 &3449508213408149251
 MonoBehaviour:
   m_ObjectHideFlags: 0

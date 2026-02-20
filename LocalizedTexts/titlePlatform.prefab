@@ -164,9 +164,11 @@ MonoBehaviour:
   texts:
   - Move Platform
   - "\u30D7\u30E9\u30C3\u30C8\u30D5\u30A9\u30FC\u30E0<br>\u5834\u6240"
-  - "\u884C\u52D5\u5E73\u53F0"
-  - "\u79FB\u52A8\u5E73\u53F0"
-  - "\uD50C\uB7AB\uD3FC \uC774\uB3D9"
+  - "<size=110%>\u884C\u52D5\u5E73\u53F0"
+  - "<size=110%>\u79FB\u52A8\u5E73\u53F0"
+  - "<size=110%>\uD50C\uB7AB\uD3FC \uC774\uB3D9"
+  - Mover plataforma
+  - "D\xE9placer la plateforme"
 --- !u!114 &1511261420282837694
 MonoBehaviour:
   m_ObjectHideFlags: 0

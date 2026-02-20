@@ -163,10 +163,12 @@ MonoBehaviour:
   languageIndex: 0
   texts:
   - Return to Base
-  - "\u57FA\u5730\u306B\u623B\u308B"
-  - "\u8FD4\u56DE\u57FA\u5730"
-  - "\u8FD4\u56DE\u57FA\u5730"
-  - "\uAE30\uC9C0\uB85C \uBCF5\uADC0"
+  - "<size=110%>\u57FA\u5730\u306B\u623B\u308B"
+  - "<size=110%>\u8FD4\u56DE\u57FA\u5730"
+  - "<size=110%>\u8FD4\u56DE\u57FA\u5730"
+  - "<size=110%>\uAE30\uC9C0\uB85C \uBCF5\uADC0"
+  - "Voltar \xE0 fonte"
+  - "Retour \xE0 la source"
 --- !u!114 &8550575390224232500
 MonoBehaviour:
   m_ObjectHideFlags: 0

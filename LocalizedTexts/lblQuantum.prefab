@@ -162,11 +162,13 @@ MonoBehaviour:
   myText: {fileID: 8804351079754077888}
   languageIndex: 0
   texts:
-  - Quantum Interactions
+  - Quantum<br>Interactions
   - "\u91CF\u5B50\u76F8\u4E92\u4F5C\u7528\u3092\u5229\u7528\u3059\u308B"
   - "\u4F7F\u7528\u91CF\u5B50\u76F8\u4E92\u4F5C\u7528"
   - "\u4F7F\u7528\u91CF\u5B50\u76F8\u4E92\u4F5C\u7528"
   - "\uC591\uC790 \uC0C1\uD638\uC791\uC6A9\uC744 \uC0AC\uC6A9\uD558\uC138\uC694"
+  - "Intera\xE7\xF5es<br>Qu\xE2nticas"
+  - Interactions<br>quantiques
 --- !u!114 &6042815035016805225
 MonoBehaviour:
   m_ObjectHideFlags: 0

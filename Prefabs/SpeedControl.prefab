@@ -678,11 +678,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7534976570687114885, guid: 3e8dcf86e31cf5544a75b41d784d9e15,
         type: 3}
-      propertyPath: texts.Array.data[0]
-      value: Particle Speed
-      objectReference: {fileID: 0}
-    - target: {fileID: 7534976570687114885, guid: 3e8dcf86e31cf5544a75b41d784d9e15,
-        type: 3}
       propertyPath: serializationData.Prefab
       value: 
       objectReference: {fileID: 7534976570687114885, guid: 3e8dcf86e31cf5544a75b41d784d9e15,

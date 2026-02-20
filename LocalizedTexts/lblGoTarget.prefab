@@ -162,11 +162,13 @@ MonoBehaviour:
   myText: {fileID: 7980841544978444678}
   languageIndex: 0
   texts:
-  - Move to Target
-  - "\u30BF\u30FC\u30B2\u30C3\u30C8\u3078\u79FB\u52D5"
-  - "\u79FB\u52D5\u5230\u76EE\u6A19"
-  - "\u79FB\u81F3\u76EE\u6807"
-  - "\uD0C0\uAC9F\uC73C\uB85C \uC774\uB3D9"
+  - Move to Screen
+  - "<size=110%>\u753B\u9762\u306B\u79FB\u52D5"
+  - "<size=110%>\u79FB\u81F3\u87A2\u5E55"
+  - "<size=110%>\u79FB\u81F3\u5C4F\u5E55"
+  - "<size=110%>\uD654\uBA74\uC73C\uB85C \uC774\uB3D9"
+  - Mover para a tela
+  - "D\xE9placer vers l'\xE9cran"
 --- !u!114 &2758388579925345283
 MonoBehaviour:
   m_ObjectHideFlags: 0

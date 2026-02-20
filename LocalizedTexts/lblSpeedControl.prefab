@@ -169,10 +169,8 @@ MonoBehaviour:
   - "<size=110%>\u7C92\u5B50\u901F\u5EA6"
   - "<size=110%>\u7C92\u5B50\u901F\u5EA6"
   - "<size=110%>\uC785\uC790 \uC18D\uB3C4"
-  - "Part\xEDcula\r\nVelocidade"
-  - 'Particule
-
-    Vitesse'
+  - "Part\xEDcula\r<br>Velocidade"
+  - Particule<br>Vitesse
 --- !u!114 &228436834055096863
 MonoBehaviour:
   m_ObjectHideFlags: 0
