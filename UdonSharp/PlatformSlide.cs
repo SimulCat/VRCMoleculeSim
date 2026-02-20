@@ -1,6 +1,4 @@
-﻿
-using System.Runtime.Remoting.Messaging;
-using UdonSharp;
+﻿using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
@@ -9,15 +7,11 @@ using VRC.Udon;
 public class PlatformSlide : UdonSharpBehaviour
 {
     [SerializeField]
-    Transform GratingTransForm;
-    [SerializeField]
     Transform TargetTransForm;
-    [SerializeField]
-    Transform LookAtTransform;
     [SerializeField]
     Vector3[] startPositions;
     [SerializeField] 
-    private float targetOffset = -0.65f;
+    private Vector3 targetOffset = new Vector3(-0.65f,0,0);
 
     [SerializeField]
     Transform portalTransform;
@@ -44,7 +38,7 @@ public class PlatformSlide : UdonSharpBehaviour
     [Header("For testing")]
     [SerializeField] private Vector3 gratingStop = Vector3.zero;
     [SerializeField] private Vector3 targetStop = Vector3.right;
-    [SerializeField] private bool hasTransforms = false;
+    [SerializeField] private bool hasTarget = false;
     [SerializeField] private Vector3 portalStop = Vector3.zero;
     [SerializeField] private Vector3 portalWas = Vector3.zero;
 
@@ -80,6 +74,8 @@ public class PlatformSlide : UdonSharpBehaviour
 
     private void SetPortalStops()
     {
+        if (portalTransform == null || portalPositions == null || portalPositions.Length <= ScaleIndex)
+            return;
         portalWas = portalStop;
         portalStop = portalPositions[ScaleIndex];
     }
@@ -87,7 +83,7 @@ public class PlatformSlide : UdonSharpBehaviour
     // Sets stop locations according to scale
     private void SetPlatformStop()
     {
-        if (hasTransforms) 
+        if (hasTarget) 
             gratingStop = startPositions[ScaleIndex];
     }
 
@@ -100,10 +96,10 @@ public class PlatformSlide : UdonSharpBehaviour
 
     private void UpdateLocation(float shift)
     {
-        if (!hasTransforms)
+        if (!hasTarget)
             return;
         targetStop = gratingStop;
-        targetStop.x = TargetTransForm.position.x + targetOffset;
+        targetStop = TargetTransForm.position + targetOffset;
 
         transform.position = Vector3.Lerp(gratingStop, targetStop, shift);
     }
@@ -125,7 +121,7 @@ public class PlatformSlide : UdonSharpBehaviour
     private bool isInitialized = false;
     private void Update()
     {
-        if (!hasTransforms) 
+        if (!hasTarget) 
             return;
         float tX = TargetTransForm.position.x;
         if (tX != previousTargetX)
@@ -143,16 +139,14 @@ public class PlatformSlide : UdonSharpBehaviour
 
     void Start()
     {
-        hasTransforms = GratingTransForm != null && TargetTransForm != null;
-        if (LookAtTransform == null)
-            LookAtTransform = transform;
+        hasTarget = TargetTransForm != null;
         if ((startPositions == null) || (startPositions.Length < 3))
         {
             startPositions = new Vector3[3];
             for (int i = 0; i< startPositions.Length; i++)
                 startPositions[i] = transform.position;
         }
-        if ((portalPositions == null) || (portalPositions.Length < 3))
+        if ((portalStop != null) && ((portalPositions == null) || (portalPositions.Length < 3)))
         {
             portalStop = portalTransform.position;
             portalWas = portalStop;
@@ -162,7 +156,7 @@ public class PlatformSlide : UdonSharpBehaviour
                 portalPositions[i] = defaultPos;
         }
         SetPlatformStop();
-        if (hasTransforms)
+        if (hasTarget)
         {
             previousTargetX = TargetTransForm.position.x;
         }
