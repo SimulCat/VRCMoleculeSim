@@ -1,17 +1,25 @@
 ﻿using UdonSharp;
 using UnityEngine;
+using UnityEngine.UI;
 using VRC.SDKBase;
 using VRC.Udon;
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 
 public class PlatformSlide : UdonSharpBehaviour
 {
+    [SerializeField, Tooltip("Slide damping"), Range(0.1f,1f)]
+    private float smoothRate = 0.5f;
+    [SerializeField, Range(0.25f, 1f), Tooltip("Rabbit speed")]
+    private float rabbitRate = 0.5f;
+    [SerializeField]
+    private Toggle baseToggle;
+    [SerializeField]
+    private Toggle screenToggle;
+    [SerializeField,UdonSynced,FieldChangeCallback(nameof(BaseToggleState))]
+    private bool baseToggleState = false;
     [SerializeField]
     Transform TargetTransForm;
-    [SerializeField]
-    Vector3[] startPositions;
-    [SerializeField] 
-    private Vector3 targetOffset = new Vector3(-0.65f,0,0);
+    [SerializeField] Vector3[] startPositions;
 
     [SerializeField]
     Transform portalTransform;
@@ -19,6 +27,22 @@ public class PlatformSlide : UdonSharpBehaviour
     Vector3[] portalPositions;
     [SerializeField, FieldChangeCallback(nameof(ScaleIndex))]
     int scaleIndex  =1;
+
+    private bool iamOwner = false;
+    private VRCPlayerApi player;
+
+    /* 
+    * Udon Sync Stuff
+    */
+    private void ReviewOwnerShip()
+    {
+        iamOwner = Networking.IsOwner(this.gameObject);
+    }
+    public override void OnOwnershipTransferred(VRCPlayerApi player)
+    {
+        ReviewOwnerShip();
+    }
+
     public int ScaleIndex
     {
         get => scaleIndex; 
@@ -27,17 +51,31 @@ public class PlatformSlide : UdonSharpBehaviour
             if (scaleIndex != value)
             {
                 scaleIndex = value;
-                SetPlatformStop();
+                ReviewPlatformSituation();
                 SetPortalStops();
             }
         }
     }
 
-    [SerializeField,UdonSynced,Range(0,1),FieldChangeCallback(nameof(LocationTween))]
-    float locationTween = 0;
+    public bool BaseToggleState
+    {
+        get => baseToggleState;
+        set
+        {
+            bool oldVal = baseToggleState;
+            baseToggleState = value;
+            if (oldVal != value) 
+                ReviewPlatformSituation();
+            RequestSerialization();
+        }
+    }
+
+
     [Header("For testing")]
-    [SerializeField] private Vector3 gratingStop = Vector3.zero;
-    [SerializeField] private Vector3 targetStop = Vector3.right;
+    [SerializeField] private Vector3 basePostion = Vector3.zero;
+    [SerializeField] private Vector3 targetPosition = Vector3.right;
+    [SerializeField] private Vector3 rabbitPosition = Vector3.zero;
+
     [SerializeField] private bool hasTarget = false;
     [SerializeField] private Vector3 portalStop = Vector3.zero;
     [SerializeField] private Vector3 portalWas = Vector3.zero;
@@ -51,7 +89,7 @@ public class PlatformSlide : UdonSharpBehaviour
             scaleIsChanging = value;
             if (!scaleIsChanging)
             {
-                SetPlatformStop();
+                ReviewPlatformSituation();
                 updatePortal(1f);
             }
         }
@@ -67,11 +105,29 @@ public class PlatformSlide : UdonSharpBehaviour
             if (experimentScale != value)
             {
                 experimentScale = value;
-                SetPlatformStop();
+                ReviewPlatformSituation();
             }
         }
     }
 
+    public void onBaseToggle()
+    {
+        bool togVal = (baseToggle != null) ? baseToggle.isOn : true;
+        if (!iamOwner)
+           Networking.SetOwner(player, gameObject);
+        Debug.Log($"Click Base {togVal}");
+        BaseToggleState = togVal;
+    }
+
+    public void onScreenToggle()
+    {
+        bool togVal = (screenToggle != null) ? screenToggle.isOn : true;
+        if (!iamOwner)
+            Networking.SetOwner(player, gameObject);
+        Debug.Log($"ScreenToggle {togVal}");
+        if (!baseToggleState && togVal)
+            ReviewPlatformSituation();
+    }
     private void SetPortalStops()
     {
         if (portalTransform == null || portalPositions == null || portalPositions.Length <= ScaleIndex)
@@ -81,10 +137,15 @@ public class PlatformSlide : UdonSharpBehaviour
     }
 
     // Sets stop locations according to scale
-    private void SetPlatformStop()
+    private void ReviewPlatformSituation()
     {
-        if (hasTarget) 
-            gratingStop = startPositions[ScaleIndex];
+        if (!hasTarget)
+        {
+            Debug.LogWarning($"{gameObject.name}: No target transform set for platform slide, using start position as target");
+            return;
+        }
+        basePostion = startPositions[ScaleIndex];
+        targetPosition = baseToggleState ? basePostion : TargetTransForm.position;
     }
 
     public void updatePortal(float shift)
@@ -94,51 +155,54 @@ public class PlatformSlide : UdonSharpBehaviour
         portalTransform.position = Vector3.Lerp(portalWas, portalStop, shift);
     }
 
-    private void UpdateLocation(float shift)
-    {
-        if (!hasTarget)
-            return;
-        targetStop = gratingStop;
-        targetStop = TargetTransForm.position + targetOffset;
-
-        transform.position = Vector3.Lerp(gratingStop, targetStop, shift);
-    }
-
-    public float LocationTween 
-    {
-        get => locationTween;
-        set 
-        {
-            if (locationTween != value)
-            {
-                locationTween = value;
-                UpdateLocation(value);
-            }
-        } 
-    }
-
-    private float previousTargetX;
     private bool isInitialized = false;
+    private Vector3 currentVelocity = Vector3.zero;
+    [SerializeField]
+    private Vector3 currentPosition = Vector3.zero;
+
     private void Update()
     {
-        if (!hasTarget) 
-            return;
-        float tX = TargetTransForm.position.x;
-        if (tX != previousTargetX)
-        {
-            previousTargetX = tX;
-            UpdateLocation(locationTween);
-        }
         if (!isInitialized)
         {
             SetPortalStops();
             updatePortal(1);
             isInitialized = true;
+            targetPosition = transform.position;
+            rabbitPosition = transform.position;
+            return;
+        }
+        if (!scaleIsChanging)
+        {
+            if (rabbitPosition != targetPosition)
+            {
+                float step = rabbitRate * Time.deltaTime;
+                if (Vector3.Dot(rabbitPosition - targetPosition, rabbitPosition - targetPosition) > 0.00003f)
+                    rabbitPosition = Vector3.MoveTowards(rabbitPosition, targetPosition, step);
+                else
+                    rabbitPosition = targetPosition;
+            }
+            currentPosition = transform.position;
+
+            if (currentPosition == rabbitPosition)
+                return;
+            Vector3 diff = currentPosition - rabbitPosition;
+            float diffSq = Vector3.Dot(diff, diff);
+            if (diffSq > 0.00003f)
+                transform.position = Vector3.SmoothDamp(currentPosition, rabbitPosition, ref currentVelocity, smoothRate);
+            else
+            {
+                Debug.Log($"Arrived at rabbit {rabbitPosition}");
+                transform.position = rabbitPosition;
+            }
         }
     }
 
     void Start()
     {
+        player = Networking.LocalPlayer;
+        if (baseToggle != null)
+            baseToggleState = baseToggle.isOn;
+
         hasTarget = TargetTransForm != null;
         if ((startPositions == null) || (startPositions.Length < 3))
         {
@@ -155,11 +219,7 @@ public class PlatformSlide : UdonSharpBehaviour
             for (int i = 0;i< portalPositions.Length;i++)
                 portalPositions[i] = defaultPos;
         }
-        SetPlatformStop();
-        if (hasTarget)
-        {
-            previousTargetX = TargetTransForm.position.x;
-        }
+        ReviewPlatformSituation();
         isInitialized = false;
     }
 }
