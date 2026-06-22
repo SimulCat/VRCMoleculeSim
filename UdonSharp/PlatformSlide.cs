@@ -9,8 +9,8 @@ public class PlatformSlide : UdonSharpBehaviour
 {
     [SerializeField, Tooltip("Slide damping"), Range(0.1f,1f)]
     private float smoothRate = 0.5f;
-    [SerializeField, Range(0.25f, 1f), Tooltip("Rabbit speed")]
-    private float rabbitRate = 0.5f;
+    [SerializeField, Range(0.25f, 3f), Tooltip("Rabbit speed")]
+    private float rabbitRate = 1f;
     [SerializeField]
     private Toggle baseToggle;
     [SerializeField]
