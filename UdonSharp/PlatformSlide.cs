@@ -19,6 +19,7 @@ public class PlatformSlide : UdonSharpBehaviour
     private bool baseToggleState = false;
     [SerializeField]
     Transform TargetTransForm;
+    [SerializeField] Vector3[] targetOffsets;
     [SerializeField] Vector3[] startPositions;
 
     [SerializeField]
@@ -145,7 +146,7 @@ public class PlatformSlide : UdonSharpBehaviour
             return;
         }
         basePostion = startPositions[ScaleIndex];
-        targetPosition = baseToggleState ? basePostion : TargetTransForm.position;
+        targetPosition = baseToggleState ? basePostion : TargetTransForm.position + targetOffsets[ScaleIndex];
     }
 
     public void updatePortal(float shift)
@@ -197,19 +198,41 @@ public class PlatformSlide : UdonSharpBehaviour
         }
     }
 
+    void CheckEnpoints()
+    {
+        if ((startPositions == null) || (startPositions.Length < 3))
+        {
+            startPositions = new Vector3[3];
+            for (int i = 0; i < startPositions.Length; i++)
+                startPositions[i] = transform.position;
+        }
+        if ((targetOffsets == null) || (targetOffsets.Length < 3))
+        {
+            targetOffsets = new Vector3[3];
+            for (int i = 0; i < targetOffsets.Length; i++)
+                targetOffsets[i] = Vector3.zero;
+        }
+    }
+#if UNITY_EDITOR
+    void OnValidate()
+    {
+        CheckEnpoints();
+    }
+#endif
+    void OnEnable()
+    {
+        CheckEnpoints();
+    }
+
     void Start()
     {
+        ReviewOwnerShip();
+        CheckEnpoints();
         player = Networking.LocalPlayer;
         if (baseToggle != null)
             baseToggleState = baseToggle.isOn;
 
         hasTarget = TargetTransForm != null;
-        if ((startPositions == null) || (startPositions.Length < 3))
-        {
-            startPositions = new Vector3[3];
-            for (int i = 0; i< startPositions.Length; i++)
-                startPositions[i] = transform.position;
-        }
         if ((portalStop != null) && ((portalPositions == null) || (portalPositions.Length < 3)))
         {
             portalStop = portalTransform.position;
