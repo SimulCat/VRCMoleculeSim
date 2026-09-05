@@ -116,7 +116,7 @@ public class PlatformSlide : UdonSharpBehaviour
         bool togVal = (baseToggle != null) ? baseToggle.isOn : true;
         if (!iamOwner)
            Networking.SetOwner(player, gameObject);
-        Debug.Log($"Click Base {togVal}");
+        //Debug.Log($"Click Base {togVal}");
         BaseToggleState = togVal;
     }
 
@@ -125,7 +125,7 @@ public class PlatformSlide : UdonSharpBehaviour
         bool togVal = (screenToggle != null) ? screenToggle.isOn : true;
         if (!iamOwner)
             Networking.SetOwner(player, gameObject);
-        Debug.Log($"ScreenToggle {togVal}");
+        //Debug.Log($"ScreenToggle {togVal}");
         if (!baseToggleState && togVal)
             ReviewPlatformSituation();
     }
@@ -192,7 +192,7 @@ public class PlatformSlide : UdonSharpBehaviour
                 transform.position = Vector3.SmoothDamp(currentPosition, rabbitPosition, ref currentVelocity, smoothRate);
             else
             {
-                Debug.Log($"Arrived at rabbit {rabbitPosition}");
+                //Debug.Log($"Arrived at rabbit {rabbitPosition}");
                 transform.position = rabbitPosition;
             }
         }
