@@ -29,7 +29,7 @@ public class GratingControl : UdonSharpBehaviour
     private void updateScales()
     {
         metricScaleFactor = 1.0f / (scaleDownFactor * nativeGraphicsRatio);
-        graphicsScaleFactor = experimentScale * metricScaleFactor;
+        graphicsScaleFactor = worldScale * metricScaleFactor;
     }
     private int NativeGraphicsRatio
     {
@@ -114,18 +114,18 @@ public class GratingControl : UdonSharpBehaviour
     }
     [Header("Grating Scale Factors")]
 
-    [Tooltip("Spatial Scaling"), FieldChangeCallback(nameof(ExperimentScale))]
-    private float experimentScale = 10;
-    private float ExperimentScale
+    [Tooltip("Spatial Scaling"), FieldChangeCallback(nameof(WorldScale))]
+    private float worldScale = 10;
+    private float WorldScale
     {
-        get => experimentScale;
+        get => worldScale;
         set
         {
-            gratingVersionValid &= experimentScale == value;
-            experimentScale = value;
+            gratingVersionValid &= worldScale == value;
+            worldScale = value;
             if (iHaveFrame)
             {
-                frameSupport.localScale = Vector3.one * experimentScale/nativeGraphicsRatio;
+                frameSupport.localScale = Vector3.one * worldScale/nativeGraphicsRatio;
             }
             updateScales();
         }

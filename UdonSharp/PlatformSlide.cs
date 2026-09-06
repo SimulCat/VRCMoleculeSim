@@ -96,16 +96,16 @@ public class PlatformSlide : UdonSharpBehaviour
         }
     }
 
-    [Tooltip("Spatial Scaling"), FieldChangeCallback(nameof(ExperimentScale))]
-    public float experimentScale = 10f;
-    public float ExperimentScale
+    [Tooltip("Spatial Scaling"), FieldChangeCallback(nameof(WorldScale))]
+    public float worldScale = 10f;
+    public float WorldScale
     {
-        get => experimentScale;
+        get => worldScale;
         set
         {
-            if (experimentScale != value)
+            if (worldScale != value)
             {
-                experimentScale = value;
+                worldScale = value;
                 ReviewPlatformSituation();
             }
         }

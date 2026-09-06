@@ -211,20 +211,20 @@ public class MoleculeExperiment : UdonSharpBehaviour
         }
     }
 
-    [Tooltip("Spatial Scaling"), FieldChangeCallback(nameof(ExperimentScale))]
-    public float experimentScale = 10f; 
-    public float ExperimentScale
+    [Tooltip("Spatial Scaling"), FieldChangeCallback(nameof(WorldScale))]
+    public float worldScale = 10f; 
+    public float WorldScale
     {
-        get => experimentScale;
+        get => worldScale;
         set
         {
-            if (experimentScale != value)
+            if (worldScale != value)
             {
-                experimentScale = value;
-                graphicsScale = experimentScale / NativeGraphicsRatio;
+                worldScale = value;
+                graphicsScale = worldScale / NativeGraphicsRatio;
                 slowScaled = slowMotion * graphicsScale;
-                emitToGratingSim = -(L1mm * experimentScale) / 1000;
-                gratingToTargetSim = (L2mm * experimentScale) / 1000;
+                emitToGratingSim = -(L1mm * worldScale) / 1000;
+                gratingToTargetSim = (L2mm * worldScale) / 1000;
                 settingsChanged = true;
                 gravityChanged = true;
                 planckChanged |= true;
@@ -793,7 +793,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
             return;
        // Debug.Log("Update Gravity!!!");
         gravityChanged = false;
-        gravitySim = useGravity ? GravityScale * gravityAcceleration * (slowScaled * slowScaled) / experimentScale : 0.0f;
+        gravitySim = useGravity ? GravityScale * gravityAcceleration * (slowScaled * slowScaled) / worldScale : 0.0f;
         var fo = particleEmitter.forceOverLifetime;
         fo.enabled = false;
         fo.y = gravitySim;
@@ -809,12 +809,12 @@ public class MoleculeExperiment : UdonSharpBehaviour
     private void checkMarkerSizes()
     {
         float trimValue = markerPointSize / 2.0f;
-        float mul = particleStartSize * experimentScale / nativeGraphicsRatio;
+        float mul = particleStartSize * worldScale / nativeGraphicsRatio;
         targetMarkerSize = Mathf.Lerp(0.1f,1,trimValue) * mul;
         if (hasTargetDecorator)
             targetDisplay.ParticleSize = targetMarkerSize;
         if (hasSource)
-            mainModule.startSize = particleStartSize * particleSize * Mathf.Sqrt(experimentScale);
+            mainModule.startSize = particleStartSize * particleSize * Mathf.Sqrt(worldScale);
     }
 
     private void dissolveDisplays()
@@ -914,7 +914,7 @@ public class MoleculeExperiment : UdonSharpBehaviour
             apertureCounts.x = colCount; apertureCounts.y = rowCount;
             apertureSize.x = holeWidth; apertureSize.y = holeHeight; 
             aperturePitches.x = colPitch; aperturePitches.y = rowPitch;
-            gratingMarkerSize = experimentScale * Mathf.Min(gratingControl.SlitHeightMetres, gratingControl.SlitWidthMetres);
+            gratingMarkerSize = worldScale * Mathf.Min(gratingControl.SlitHeightMetres, gratingControl.SlitWidthMetres);
             //if (hasGratingDecorator)
             //    gratingDecals.ParticleSize = gratingMarkerSize;
             minDeBroglieWL = (h * PlanckScale) / (AMU_ToKg * molecularWeight * avgMoleculeSpeed * (1 + randomRange));
@@ -1013,9 +1013,9 @@ public class MoleculeExperiment : UdonSharpBehaviour
             speedSlider.SetValue(speedPercent);
         }
         RandomRangePercent = randomRangePercent;
-        float tmp = experimentScale;
-        experimentScale = 0;
-        ExperimentScale = tmp;
+        float tmp = worldScale;
+        worldScale = 0;
+        WorldScale = tmp;
         if (particleEmitter == null)
             particleEmitter = GetComponent<ParticleSystem>();
         hasSource = particleEmitter != null;
