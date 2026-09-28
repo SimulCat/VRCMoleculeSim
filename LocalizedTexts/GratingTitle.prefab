@@ -95,8 +95,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 22
-  m_fontSizeBase: 22
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -161,6 +161,7 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 542168923188445577}
   myText: {fileID: 1112691669920750952}
   languageIndex: 0
+  pageNumber: -1
   texts:
   - Grating Scale<br>& Dimensions
   - "<size-110%>\u683C\u5B50\u5BF8\u6CD5\u3068\u30B9\u30B1\u30FC\u30EB"

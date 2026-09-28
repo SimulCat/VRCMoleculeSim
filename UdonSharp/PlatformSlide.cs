@@ -9,7 +9,7 @@ public class PlatformSlide : UdonSharpBehaviour
 {
     [SerializeField, Tooltip("Slide damping"), Range(0.1f,1f)]
     private float smoothRate = 0.5f;
-    [SerializeField, Range(0.25f, 3f), Tooltip("Rabbit speed")]
+    [SerializeField, Range(0.25f, 5f), Tooltip("Rabbit speed")]
     private float rabbitRate = 1f;
     [SerializeField]
     private Toggle baseToggle;
@@ -82,16 +82,30 @@ public class PlatformSlide : UdonSharpBehaviour
     [SerializeField] private Vector3 portalWas = Vector3.zero;
 
     [SerializeField,FieldChangeCallback(nameof(ScaleIsChanging))] private bool scaleIsChanging = false;
+    private float getRelativePosition()
+    {
+        if (targetPosition == basePostion)
+            return 0f;
+        return (transform.position - basePostion).magnitude / (targetPosition - basePostion).magnitude;
+    }
     public bool ScaleIsChanging
     {
         get => scaleIsChanging;
         set
         {
+            bool isChanged = (scaleIsChanging != value);
             scaleIsChanging = value;
             if (!scaleIsChanging)
             {
                 ReviewPlatformSituation();
                 updatePortal(1f);
+            }
+            else
+            {
+                if (isChanged)
+                {
+                    relativePosition = getRelativePosition();
+                }
             }
         }
     }
@@ -160,6 +174,8 @@ public class PlatformSlide : UdonSharpBehaviour
     private Vector3 currentVelocity = Vector3.zero;
     [SerializeField]
     private Vector3 currentPosition = Vector3.zero;
+    [SerializeField]
+    private float relativePosition = 0f; // Offset between target and base position, used for scaling
 
     private void Update()
     {
@@ -194,7 +210,14 @@ public class PlatformSlide : UdonSharpBehaviour
             {
                 //Debug.Log($"Arrived at rabbit {rabbitPosition}");
                 transform.position = rabbitPosition;
+                relativePosition = getRelativePosition();
             }
+        }
+        else 
+        { 
+            currentPosition = Vector3.Lerp(basePostion, targetPosition, relativePosition);
+            rabbitPosition = currentPosition;
+            transform.position = currentPosition;
         }
     }
 

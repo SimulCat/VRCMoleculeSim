@@ -161,6 +161,7 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7843602706301217252}
   myText: {fileID: 6724506117668799990}
   languageIndex: 0
+  pageNumber: -1
   texts:
   - Grating Scale Ratio
   - "<Size=110%>\u683C\u5B50\u30B5\u30A4\u30BA\u6BD4"

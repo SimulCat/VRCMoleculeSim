@@ -161,6 +161,7 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 3492755467929644113}
   myText: {fileID: 1179389487729560325}
   languageIndex: 0
+  pageNumber: -1
   texts:
   - Slit Count
   - "<size=110%>\u5217\u306E\u6570"

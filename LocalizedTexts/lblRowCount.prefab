@@ -161,6 +161,7 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 2520407118508440764}
   myText: {fileID: 1790771043065469960}
   languageIndex: 0
+  pageNumber: -1
   texts:
   - Rows
   - "<size=110%>\u884C\u6570"
