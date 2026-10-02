@@ -987,6 +987,19 @@ public class MoleculeExperiment : UdonSharpBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        if (markerSizeSlider != null)
+        {
+            markerSizeSlider.SetLimits(0.1f, 5f);
+            markerSizeSlider.SetValue(markerPointSize);
+        }
+        if (speedSlider != null)
+        {
+            speedSlider.SetLimits(-50, 50);
+            speedSlider.SetValue(speedPercent);
+        }
+    }
     bool isRunning = false;
    private void Start()
     {
@@ -1007,11 +1020,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
             //gratingPosition.x -= 0.001f;
         }
         SpeedPercent = speedPercent;
-        if (speedSlider != null)
-        {
-            speedSlider.SetLimits(-50, 50);
-            speedSlider.SetValue(speedPercent);
-        }
         RandomRangePercent = randomRangePercent;
         float tmp = worldScale;
         worldScale = 0;
@@ -1028,11 +1036,6 @@ public class MoleculeExperiment : UdonSharpBehaviour
         }
 
         MarkerPointSize = markerPointSize;
-        if (markerSizeSlider != null)
-        {
-            markerSizeSlider.SetLimits(0.1f, 5f);
-            markerSizeSlider.SetValue(markerPointSize);
-        }
         ParticleSize = particleSize;
         if (particleSizeSlider != null)
         {

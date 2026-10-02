@@ -67,7 +67,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Quantum Interaction
+  m_text: Enable
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ddbcc27b0346e4644a45316aaf00c441, type: 2}
   m_sharedMaterial: {fileID: 4410821715232426517, guid: ddbcc27b0346e4644a45316aaf00c441,
@@ -161,14 +161,15 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 6042815035016805225}
   myText: {fileID: 8804351079754077888}
   languageIndex: 0
+  pageNumber: -1
   texts:
-  - Quantum<br>Interactions
-  - "\u91CF\u5B50\u76F8\u4E92\u4F5C\u7528\u3092\u5229\u7528\u3059\u308B"
+  - Enable
+  - "<size=110%>\u6709\u52B9\u306B\u3059\u308B"
   - "\u4F7F\u7528\u91CF\u5B50\u76F8\u4E92\u4F5C\u7528"
   - "\u4F7F\u7528\u91CF\u5B50\u76F8\u4E92\u4F5C\u7528"
   - "\uC591\uC790 \uC0C1\uD638\uC791\uC6A9\uC744 \uC0AC\uC6A9\uD558\uC138\uC694"
-  - "Intera\xE7\xF5es<br>Qu\xE2nticas"
-  - Interactions<br>quantiques
+  - Habilitar
+  - Activer
 --- !u!114 &6042815035016805225
 MonoBehaviour:
   m_ObjectHideFlags: 0
